@@ -20,8 +20,10 @@ const app = express();
 
 // const seed = require('./seed');
 
-mongoose
-  .connect("mongodb://localhost:27017/store", 
+//mongoose
+//  .connect("mongodb://localhost:27017/store", 
+mongoose.connect(
+  "mongodb+srv://adebola:DKHMPP7erKY5a2yB@cluster0-e6ivf.mongodb.net/store?retryWrites=true&w=majority",
   { useNewUrlParser: true,
     useUnifiedTopology: true 
   })
@@ -32,7 +34,7 @@ mongoose
     console.log("Connection Failed: " + err);
   });
 
-  // seed();
+  //seed();
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
