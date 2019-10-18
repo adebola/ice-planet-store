@@ -1,0 +1,121 @@
+<% include ../partials/header %>
+
+<div class="card mx-auto mt-5" style="max-width: 500px;">
+  <article class="card-body">
+    <div class="row">
+      <div class="col-md-9">
+        <h4 class="card-title mt-3 text-center text-md-left">
+          Create IcePlanet Account
+        </h4>
+      </div>
+      <div class="col-md-3">
+        <div class="container mx-auto mb-3" style="max-width: 100px;">
+          <img src="/images/logo.png" class="img-fluid" />
+        </div>
+      </div>
+    </div>
+
+    <form action="/users/signup" method="POST">
+      <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
+
+      <!-- FullName Input -->
+      <div class="form-group input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+        </div>
+        <input
+          name="fullname"
+          class="form-control"
+          placeholder="Full Name"
+          type="text"
+          required
+        />
+      </div>
+
+      <!-- E-mail Input -->
+      <div class="form-group input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
+        </div>
+        <input
+          name="email"
+          class="form-control"
+          placeholder="Email address"
+          type="email"
+          required
+        />
+      </div>
+      <!-- Telephone Number -->
+      <div class="form-group input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text"> <i class="fa fa-phone"></i> </span>
+        </div>
+        <input
+          name="telephone"
+          class="form-control"
+          placeholder="Phone number"
+          type="text"
+        />
+      </div>
+
+      <!-- Password Input -->
+      <div class="form-group input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+        </div>
+        <input
+          id="txtPassword"
+          name="password"
+          class="form-control"
+          placeholder="Create password"
+          type="password"
+          required
+        />
+      </div>
+     
+      <!-- Repeat Password Input -->
+      <div class="form-group input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+        </div>
+        <input
+          id="txtConfirmPassword"
+          name="confirm-password"
+          class="form-control"
+          placeholder="Repeat password"
+          type="password"
+          required
+        />
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-group">
+        <input
+          type="submit"
+          class="btn btn-warning btn-block"
+          value="Create Account"
+          onclick="return Validate()"
+        />
+      </div>
+
+      <!-- Login Link -->
+
+      <div class="row">
+        <div class="col-5">
+          <p >
+            <a href="/users/signin" class="btn btn-outline-warning">Log In</a>
+          </p>
+        </div>
+        <div class="col-7">
+          <p class="text-right">
+          <a href="/users/verify" class="btn btn-outline-warning">Resend Verification Mail</a>
+          </p>
+        </div>
+      </div>
+    </form>
+  </article>
+</div>
+
+<script type="text/javascript" src="/javascripts/script.js"></script>
+
+<% include ../partials/footer %>

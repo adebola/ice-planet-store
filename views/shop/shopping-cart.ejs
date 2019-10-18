@@ -1,0 +1,119 @@
+<% include ../partials/header %>
+<link rel="stylesheet" href="/stylesheets/shopping-cart.css" />
+<div id="error-caption" class="container mt-3">
+
+</div>
+<input type="hidden" id="_csrf" value="<%=csrfToken%>" />
+
+<% if (products) { %>
+<div class="container">
+  <div class="card shopping-cart">
+    <div class="card-header bg-dark text-light">
+      <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+      Shopping cart
+      <a href="/products" class="btn btn-outline-warning btn-sm float-right"
+        >Continue Shopping</a
+      >
+      <div class="clearfix"></div>
+    </div>
+    <div class="card-body">
+      <!-- PRODUCT -->
+      <% products.forEach((product) => { product.bundles.forEach((bundle) => {
+      if (bundle.qty > 0) { %>
+
+      <div class="row">
+        <!-- First DiV -->
+        <div class="col-md-2 col-12 col-sm-12 text-center">
+          <img
+            class="img-responsive"
+            src="<%= product.imagePath %>"
+            alt="prewiew"
+            width="120"
+            height="80"
+          />
+        </div>
+        <!-- Second Div -->
+        <div
+          class="col-12 col-sm-12 text-center text-md-right text-lg-left col-md-5"
+        >
+          <h4 class="product-name"><strong><%= product.name%></strong></h4>
+          <h4>
+            <small class="text-muted"
+              >SubTotal : &#x20A6;<%= bundle.price * bundle.qty %></small
+            >
+          </h4>
+        </div>
+
+        <!-- Third Div -->
+        <div class="text-sm-center col-12 col-sm-12 col-md-5 text-md-right row">
+          <div
+            class="col-3 col-sm-3 col-md-6 text-md-right"
+            style="padding-top: 5px"
+          >
+            <h6>
+              <strong
+                ><%=bundle.unit %>
+                <span class="text-muted"> &nbsp;x</span></strong
+              >
+            </h6>
+          </div>
+
+          <div class="col-4 col-sm-4 col-md-4 ml-0">
+            <div class="quantity ml-0">
+              <!-- <input
+                type="button"
+                value="+"
+                class="plus"
+              /> -->
+
+              <input
+                type="number"
+                step="1"
+                max="99"
+                min="1"
+                value="<%= bundle.qty%>"
+                title="Qty"
+                class="qty ml-0"
+                size="4"
+                onchange="clickplus(this, '<%=product._id%>', '<%= bundle._id%>')"
+              />
+              <!-- <input
+                type="button"
+                value="-"
+                class="minus"
+              /> -->
+            </div>
+          </div>
+          <div class="col-2 col-sm-2 col-md-2 text-right">
+            <a
+              href="/products/deleteproduct/<%=product._id%>&<%=bundle._id%>"
+              class="btn btn-outline-danger btn-xs"
+            >
+              <i class="fa fa-trash" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <% } }); }); %>
+      <!-- END PRODUCT -->
+    </div>
+    <div class="card-footer">
+      <div class="float-right" style="margin: 10px">
+        <a href="" class="btn btn-success float-right">Checkout</a>
+        <div class="float-right" style="margin: 5px">
+          Total price: <b>&#x20A6;<%= totalPrice %></b>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<% } else { %>
+
+<div class="container">
+  <h4 class="text-center">There are No Items in the Shopping Cart</h4>
+</div>
+
+<% } %>
+
+<script type="text/javascript" src="/javascripts/script.js"></script>
