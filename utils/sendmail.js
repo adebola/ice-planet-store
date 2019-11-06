@@ -1,10 +1,13 @@
 const AWS = require("aws-sdk");
+const Mail = require('../models/mail');
 
 module.exports = function sendMail(recipient, textBody, subject) {
   AWS.config.update({ 
-    accessKeyId: 'AKIASYMXWBHN7U54JOVI',
-    secretAccessKey: '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',
+    accessKeyId: process.env.ACCESSKEYID,
+    secretAccessKey: process.env.SECRETACCESSKEY,
     region: 'us-east-1' });
+
+    const mailFrom = 'iceplanet@factorialsystems.io';
 
   var params = {
     Destination: {
@@ -25,7 +28,7 @@ module.exports = function sendMail(recipient, textBody, subject) {
       }
     },
 
-    Source: "no-reply@factorialsystems.io",
+    Source: mailFrom,
     ReplyToAddresses: [],
   };
 
@@ -34,7 +37,22 @@ module.exports = function sendMail(recipient, textBody, subject) {
   // Handle promise's fulfilled/rejected states
 sendPromise.then(
   function(data) {
-    console.log(data.MessageId);
+    
+    var mail = new Mail({
+      to: recipient,
+      from: mailFrom,
+      content: textBody,
+      subject: subject,
+      mailId: data.MessageId
+    });
+
+    mail.save()
+    .then((newMail) => {
+      console.log(data.MessageId);
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
   }).catch(
     function(err) {
     console.error(err, err.stack);

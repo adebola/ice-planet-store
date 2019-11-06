@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "app-root-path": "^3.0.0",
     "aws-sdk": "^2.540.0",
     "bcrypt": "^3.0.6",
     "connect-flash": "^0.1.1",
@@ -22,6 +23,8 @@
     "morgan": "~1.9.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
-    "serve-favicon": "^2.5.0"
+    "paystack": "^2.0.1",
+    "serve-favicon": "^2.5.0",
+    "winston": "^3.2.1"
   }
 }

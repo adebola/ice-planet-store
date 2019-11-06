@@ -5,6 +5,7 @@
 </div>
 <input type="hidden" id="_csrf" value="<%=csrfToken%>" />
 
+
 <% if (products) { %>
 <div class="container">
   <div class="card shopping-cart">
@@ -100,7 +101,8 @@
     </div>
     <div class="card-footer">
       <div class="float-right" style="margin: 10px">
-        <a href="" class="btn btn-success float-right">Checkout</a>
+        <!-- <a href="/orders/start-transaction" class="btn btn-success float-right">Checkout</a> -->
+        <button class="btn btn-success float-right" onclick="payWithPaystack()">Checkout</button>
         <div class="float-right" style="margin: 5px">
           Total price: <b>&#x20A6;<%= totalPrice %></b>
         </div>
@@ -116,4 +118,7 @@
 
 <% } %>
 
-<script type="text/javascript" src="/javascripts/script.js"></script>
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<script src="/javascripts/script.js"></script>
+
+<% include ../partials/footer %>

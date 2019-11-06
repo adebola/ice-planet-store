@@ -3,20 +3,42 @@ const csrf = require("csurf");
 const router = express.Router();
 const Product = require("../models/product");
 const Cart = require("../models/cart");
-const Order = require("../models/order");
+const logger = require('../config/winston');
+// const Order = require("../models/order");
+// const Paystack = require('Paystack')('sk_test_dc49331ff608b44e93cc84ebbd3fdd368d5052ee');
 
 router.use(csrf());
 
 router.get("/", (req, res, next) => {
   Product.find({}, (err, products) => {
     if (err) {
-      console.log("Error Loading Products From Database : " + err);
+      logger.error("Error Loading Products from Database: " + err.message);
+      // console.log("Error Loading Products From Database : " + err.message);
     } else {
+      logger.info("Products Loaded Successfully From Database");
       res.render("shop/index", { products: products,
                                  csrfToken: req.csrfToken() });
     }
   });
 });
+
+// router.post('/new-access-code', isLoggedIn, (req, res, next) => {
+//   var response = Paystack.transaction.initialize({
+//     reference: "7PVGX8MEk85tgeEpVDtD",
+//     amount: 50000,
+//     email: "adeomoboya@gmail.com"
+//   }).then((msg) => {
+//     console.log(msg);
+//     return res.status(201).json({
+//       access_code : msg.data.access_code
+//     });
+    
+//   }).catch((err) => {
+//     console.log(err.message);
+//   });
+
+//   res.redirect('/products/pay');
+// });
 
 router.post("/bundle", (req, res, next) => {
   if (req.body) {
@@ -39,11 +61,11 @@ router.post("/bundle", (req, res, next) => {
             });
           }
         }
-
+        
         res.status(404).json({ message: "Bundle Not Found in Product" });
       } else {
         console.log("Product Not Found");
-        res.status(404).json({ message: "Product Not Found" });
+        res.status(404).json({ message: "Product Not Found in Database" });
       }
     })
     .catch(err => {
@@ -84,10 +106,6 @@ router.post('/addremove', (req, res, next) => {
   var productId = req.body.productId;
   var bundleId = req.body.bundleId;
   var qty = req.body.value;
-
-  console.log(productId);
-  console.log(bundleId);
-  console.log(qty);
 
   var cart = req.session.cart;
   var item = cart.items[productId];
@@ -153,6 +171,16 @@ router.get('/deleteproduct/:id', (req, res, next) => {
   res.redirect('/products/shopping-cart');
 });
 
+router.get('/pay', isLoggedIn, (req, res, next) => {
+  res.render("shop/pay", {
+    csrfToken: req.csrfToken()
+  });
+});
+
+router.post('/report', (req, res, next) => {
+  console.log(req.body.data);
+});
+
 router.get("/shopping-cart", (req, res, next) => {
   if (!req.session.cart) {
     return res.render("shop/shopping-cart", { 
@@ -169,7 +197,6 @@ router.get("/shopping-cart", (req, res, next) => {
     csrfToken: req.csrfToken()
   });
 });
-
 
 function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {

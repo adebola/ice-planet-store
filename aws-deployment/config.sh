@@ -1,0 +1,5 @@
+#export DATABASEURL="mongodb+srv://adebola:DKHMPP7erKY5a2yB@cluster0-e6ivf.mongodb.net/store?retryWrites=true&w=majority"
+export DATABASEURL="mongodb://localhost:27017/store"
+export ACCESSKEYID="AKIASYMXWBHN5ASMDUPD"
+export SECRETACCESSKEY="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"
+export PAYSTACKSECRETKEY="sk_test_dc49331ff608b44e93cc84ebbd3fdd368d5052ee"

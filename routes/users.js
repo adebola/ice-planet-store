@@ -14,8 +14,6 @@ router.get("/profile", isLoggedIn, (req, res, next) => {
   });
 });
 
-// router.get("/")
-
 router.get("/signout", isLoggedIn, (req, res, next) => {
   req.logout();
   res.redirect("/products");
@@ -206,7 +204,7 @@ router.post(
       req.session.oldUrl = null;
       res.redirect(oldUrl);
     } else {
-      res.redirect("/users/products");
+      res.redirect("/products");
     }
   }
 );
