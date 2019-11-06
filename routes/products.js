@@ -4,8 +4,6 @@ const router = express.Router();
 const Product = require("../models/product");
 const Cart = require("../models/cart");
 const logger = require('../config/winston');
-// const Order = require("../models/order");
-// const Paystack = require('Paystack')('sk_test_dc49331ff608b44e93cc84ebbd3fdd368d5052ee');
 
 router.use(csrf());
 
@@ -13,32 +11,12 @@ router.get("/", (req, res, next) => {
   Product.find({}, (err, products) => {
     if (err) {
       logger.error("Error Loading Products from Database: " + err.message);
-      // console.log("Error Loading Products From Database : " + err.message);
     } else {
-      logger.info("Products Loaded Successfully From Database");
       res.render("shop/index", { products: products,
                                  csrfToken: req.csrfToken() });
     }
   });
 });
-
-// router.post('/new-access-code', isLoggedIn, (req, res, next) => {
-//   var response = Paystack.transaction.initialize({
-//     reference: "7PVGX8MEk85tgeEpVDtD",
-//     amount: 50000,
-//     email: "adeomoboya@gmail.com"
-//   }).then((msg) => {
-//     console.log(msg);
-//     return res.status(201).json({
-//       access_code : msg.data.access_code
-//     });
-    
-//   }).catch((err) => {
-//     console.log(err.message);
-//   });
-
-//   res.redirect('/products/pay');
-// });
 
 router.post("/bundle", (req, res, next) => {
   if (req.body) {
@@ -60,16 +38,18 @@ router.post("/bundle", (req, res, next) => {
               price: foundProduct.bundles[i].price
             });
           }
-        }
-        
+        } 
+
+        logger.error("router.post(/bundle) => Bundle: " + bundleId + " Not Found in ProductId: " + productId); 
         res.status(404).json({ message: "Bundle Not Found in Product" });
       } else {
-        console.log("Product Not Found");
+        logger.error("router.post(/bundle) => Product: " + productId + " Not Found in the Database");
         res.status(404).json({ message: "Product Not Found in Database" });
       }
     })
     .catch(err => {
-      console.log(err.message);
+      log.error("router.post(/bundle) => Exception in Product.findById()");
+      log.error(err.message);
       res.status(500).json({ message: "Internal Error: " + err.message });
     });
 });
@@ -94,10 +74,13 @@ router.post("/add-to-cart/:id", (req, res, next) => {
       try {
         req.session.save();
       } catch (err) {
-        console.log("Error Saving Session : " + err.message);
+        log.error("router.post(/add-to-cart/:id) => Error Saving Session : " + err.message);
       }
     })
-    .catch(err => {});
+    .catch(err => {
+      logger.error("router.post(/add-to-cart/:id) => Exception in Product.findById() for Product: " + productId);
+      logger.error(err.message);
+    });
 
   res.redirect("/products");
 });
@@ -118,8 +101,6 @@ router.post('/addremove', (req, res, next) => {
         bundle.qty = qty;
         bundle.subTotalPrice += adjustPrice;
         cart.totalPrice += adjustPrice;
-
-        console.log("New TotalPrice : " + cart.totalPrice);
       }
     });
 
@@ -128,6 +109,7 @@ router.post('/addremove', (req, res, next) => {
       message: "success",
     });
   } else {
+    logger.error("router.post(/addremove) => Product: " + productId + " Not In cart");
     return res.status(404).json({message: "Product Not Found in Cart"});
   }
 });
@@ -146,8 +128,6 @@ router.get('/deleteproduct/:id', (req, res, next) => {
   var removeProduct = true;
 
   if (item) {
-    console.log('Found Item to Remove');
-
     item.bundles.forEach((bundle) => {
       if (bundle._id == bundleId) {
         cart.totalPrice -= bundle.subTotalPrice;

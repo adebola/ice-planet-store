@@ -1,7 +1,6 @@
 const express = require("express");
 const csrf = require("csurf");
 const router = express.Router();
-const Paystack = require("Paystack")(process.env.PAYSTACKSECRETKEY);
 
 const Order = require("../models/order");
 

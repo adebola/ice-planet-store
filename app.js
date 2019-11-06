@@ -17,7 +17,7 @@ const userRouter = require("./routes/users");
 const productRouter = require('./routes/products');
 const orderRouter = require('./routes/orders');
 
-const winston = require('./config/winston');
+const logger = require('./config/winston');
 
 const app = express();
 
@@ -29,10 +29,12 @@ mongoose.connect(
     useUnifiedTopology: true
   })
   .then(() => {
-    console.log("Connected to Mongo Database");
+    console.log("Connected to MongoDB");
+    logger.info("Connected to Mongo Database Successfully");
   })
   .catch(err => {
-    console.log("Connection Failed: " + err);
+    console.log("Database Connection Error: " + err.message);
+    logger.error("MongoDB Connection Failed: " + err);
   });
 
   //seed();
@@ -41,7 +43,7 @@ mongoose.connect(
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
-app.use(morgan("combined", {stream: winston.stream}));
+app.use(morgan("combined"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -85,7 +87,7 @@ app.use(function(err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
-  winston.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+  logger.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
 
   // render the error page
   res.status(err.status || 500);
