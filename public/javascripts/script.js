@@ -37,7 +37,7 @@ function numberWithCommas(x) {
 
 function handleOptions(option) {
   $(".cart-info").css("display", "none");
-  $("#delivery-item").css("display", "none");
+  //$("#delivery-item").css("display", "none");
 
   console.log($("#delivery-item"));
 
@@ -45,7 +45,7 @@ function handleOptions(option) {
     $("#pickup").css("display", "block");
   } else if (option.id === "option-2") {
     $("#deliver").css("display", "block");
-    $("#delivery-item").css("display", "block");
+    //$("#delivery-item").css("display", "block");
   } else if (option.id === "option-3") {
     $("#credit").css("display", "block");
   } else if (option.id === "option-4") {
@@ -218,7 +218,7 @@ function payWithPaystack() {
 
     if (xhttpReq.readyState === 4 && xhttpReq.status === 201) {
       var handler = PaystackPop.setup({
-        key: "pk_test_94dbaebf2467e2b41e3552f23a093e7e55cbe57e",
+        key: "pk_live_03b4aca139cfec3fc9b816440742819e32d87bc4",
         email: indata.email,
         amount: indata.amount * 100,
         currency: "NGN",
