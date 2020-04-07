@@ -13,7 +13,10 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="/stylesheets/style.css" />
-    <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css?family=Raleway&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <nav class="navbar navbar-expand-md navbar-light bg-warning">
@@ -34,34 +37,36 @@
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
+
           <li class="nav-item active">
-            <a class="nav-link" href="/"
-              >Home <span class="sr-only">(current)</span></a
-            >
-          </li>
-          <li class="nav-item">
             <a class="nav-link" href="/products">Shop</a>
           </li>
         </ul>
 
         <ul class="navbar-nav">
-         
-          <% if (!currentUser) { %>
-          <li class="nav-item">
-            <a href="/users/signin" class="nav-link"><i class="fas fa-sign-in-alt"></i> Login</a>
-          </li>
-          <li class="nav-item">
-            <a href="/users/signup" class="nav-link"><i class="fas fa-user-plus"></i> SignUp</a>
-          </li>
-
-          <% }  else { %>
-
           <li class="nav-item">
             <a href="/products/shopping-cart" class="nav-link">
-                <i class="fas fa-cart-arrow-down"></i> Cart
-                <span class="badge badge-danger"><%= session.cart ? session.cart.totalQty : 0 %></span>
+              <i class="fal fa-shopping-cart"></i> Cart
+              <span class="badge badge-danger"
+                ><%= session.cart ? session.cart.totalQty : 0 %></span
+              >
             </a>
           </li>
+
+          <% if (!currentUser) { %>
+          <li class="nav-item">
+            <a href="/users/signin" class="nav-link"
+              ><i class="fal fa-sign-in-alt"></i> Login</a
+            >
+          </li>
+          <li class="nav-item">
+            <a href="/users/signup" class="nav-link"
+              ><i class="fal fa-user-plus"></i> SignUp</a
+            >
+          </li>
+
+          <% } else { %>
+
           <li class="nav-item dropdown">
             <a
               class="nav-link dropdown-toggle"
@@ -72,32 +77,34 @@
               aria-haspopup="true"
               aria-expanded="false"
             >
-            <i class="far fa-user"></i> <%= currentUser.fullName %>
+              <i class="far fa-user"></i> <%= currentUser.fullName %>
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="/users/profile"><i class="far fa-address-card"></i> Profile</a>
-              <a class="dropdown-item" href="#"><i class="fas fa-history"></i> History</a>
+              <a class="dropdown-item" href="/users/profile"
+                ><i class="fal fa-address-card"></i> Profile</a
+              >
+              <a class="dropdown-item" href="/users/history/1"
+                ><i class="fal fa-files-medical"></i> History</a
+              >
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="/users/signout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+              <a class="dropdown-item" href="/users/signout"
+                ><i class="fal fa-sign-out-alt"></i> Logout</a
+              >
             </div>
           </li>
           <% } %>
-         
-         
         </ul>
       </div>
     </nav>
 
     <div id="error-caption" class="container mt-3">
-      <% if (err && err.length > 0) { %>
-        <div class="alert alert-danger">
-            <%=err%>
-        </div>
-      <% } %>
-
-      <% if (success && success.length > 0) { %>
-        <div class="alert alert-success">
-            <%=success%>
-        </div>
+      <% if (errorMsg && errorMsg.length > 0) { %>
+      <div class="alert alert-danger">
+        <%=errorMsg%>
+      </div>
+      <% } %> <% if (successMsg && successMsg.length > 0) { %>
+      <div class="alert alert-success">
+        <%=successMsg%>
+      </div>
       <% } %>
     </div>

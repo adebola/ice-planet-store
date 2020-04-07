@@ -1,3 +1,5 @@
+const logger = require('../config/winston');
+
 module.exports = function Cart(oldCart) {
   this.items = oldCart.items || {};
   this.totalQty = oldCart.totalQty || 0;
@@ -10,11 +12,11 @@ module.exports = function Cart(oldCart) {
     var storedItem = this.items[productId];
     qty = parseInt(qty);
 
-    console.log("Total Quantity: " + this.totalQty);
+    logger.info("Cart Object Total Quantity: " + this.totalQty);
 
     if (!storedItem) {
       
-      console.log("StoredItem Not Found Creating It");
+      logger.info("Cart Object StoredItem Not Found Creating It");
 
       storedItem = this.items[productId] = item;
 
@@ -31,7 +33,7 @@ module.exports = function Cart(oldCart) {
         }
       });
     } else {
-      console.log("StoredItem Found");
+      logger.info("Cart Object StoredItem Found");
 
       storedItem.bundles.forEach((bundle) => {
           
@@ -47,7 +49,7 @@ module.exports = function Cart(oldCart) {
           bundle.qty += qty;
           addPrice = qty * bundle.price;
           bundle.subTotalPrice += addPrice;
-          console.log("Inside Bundle.Equals Item Found")
+          logger.info("Cart Object Inside Bundle.Equals Item Found")
         }
       });
     }

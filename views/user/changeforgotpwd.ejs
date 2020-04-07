@@ -1,0 +1,75 @@
+<% include ../partials/header %>
+
+<div class="error-caption"></div>
+
+<div class="card mx-auto mt-5" style="max-width: 500px;">
+  <div class="card">
+    <article class="card-body">
+      <div class="row">
+        <div class="col-md-9">
+          <h4 class="card-title mt-3 text-center text-md-left">
+            Change Password
+          </h4>
+        </div>
+        <div class="col-md-3">
+          <div class="container mx-auto mb-3" style="max-width: 100px;">
+            <img src="/images/logo.png" class="img-fluid" />
+          </div>
+        </div>
+      </div>
+
+      <hr />
+
+      <form action="/users/changeforgotpassword/<%=user.passwordResetToken%>" method="POST">
+        <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
+        <!-- Password Input -->
+        <div class="form-group input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="far fa-lock-open-alt"></i>
+            </span>
+          </div>
+          <input
+            id="txtPassword"
+            name="password"
+            class="form-control"
+            placeholder="Enter New Password"
+            type="password"
+            required
+          />
+        </div>
+
+        <!-- Repeat Password Input -->
+        <div class="form-group input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="far fa-lock-open-alt"></i
+            ></span>
+          </div>
+          <input
+            id="txtConfirmPassword"
+            name="confirm-password"
+            class="form-control"
+            placeholder="Repeat New Password"
+            type="password"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <button
+            type="submit"
+            class="btn btn-warning btn-block"
+            onclick="return Validate()"
+          >
+            Change Password
+          </button>
+        </div>
+      </form>
+    </article>
+  </div>
+  <!-- card.// -->
+</div>
+
+<script type="text/javascript" src="/javascripts/script.js"></script>
+<% include ../partials/footer %>

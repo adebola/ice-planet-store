@@ -63,3 +63,12 @@
 .shopping-cart {
   margin-top: 20px;
 }
+
+#deliver, #credit, #org  {
+  display: none;
+}
+
+.cart-info {
+  margin-left: 10%;
+  margin-right: 10%;
+}

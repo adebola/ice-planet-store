@@ -8,10 +8,16 @@ var logger = new winston.createLogger({
   defaultMeta: {service: 'iceplanet-store'},
   transports: [
     new winston.transports.File({filename: `${appRoot}/logs/appstore.log`, maxsize: 5242880, maxFiles: 20}),
-    new winston.transports.Console({})
+    new winston.transports.File({filename: `${appRoot}/logs/error.log`, level: 'error', maxsize: 5242880, maxFiles: 20})
   ],
   exitOnError: false
 });
+
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console({
+    format: winston.format.simple()
+  }));
+}
 
 // create a stream object with a 'write' function that will be used by morgan
 logger.stream = {

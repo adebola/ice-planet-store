@@ -1,0 +1,17 @@
+<% include ../partials/header %>
+
+<div class="container">
+<h1>System Error</h1>
+
+<% if (error) { %> 
+<h2><%= error.status %></h2>
+<pre><%= error.stack %></pre>
+<% } %>
+
+  <p><%= message %></p>
+  <p class="text-muted">Please refresh the page to continue</p>
+</div>
+
+
+
+<% include ../partials/footer %>

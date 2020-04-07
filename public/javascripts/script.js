@@ -4,9 +4,10 @@ function Validate() {
 
   if (password != confirmPassword) {
     showError("Passwords do not Match!!!");
-
+    console.log("False");
     return false;
   }
+
   return true;
 }
 
@@ -15,15 +16,41 @@ function showError(message) {
   var alertElement = document.createElement("div");
   alertElement.classList.add("alert");
   alertElement.classList.add("alert-danger");
-  alertElement.innerText = message;
+  alertElement.innerHTML = message;
   errordiv.appendChild(alertElement);
 }
+
+// function showPickupPolicy() {
+//   var policydiv = document.getElementById("pickup");
+//   var policyElement = document.createElement("div");
+//   policyElement.classList.add("alert");
+//   policyElement.classList.add("alert-info");
+
+// }
 
 function numberWithCommas(x) {
   x = x.toString();
   var pattern = /(-?\d+)(\d{3})/;
   while (pattern.test(x)) x = x.replace(pattern, "$1,$2");
   return x;
+}
+
+function handleOptions(option) {
+  $(".cart-info").css("display", "none");
+  $("#delivery-item").css("display", "none");
+
+  console.log($("#delivery-item"));
+
+  if (option.id === "option-1") {
+    $("#pickup").css("display", "block");
+  } else if (option.id === "option-2") {
+    $("#deliver").css("display", "block");
+    $("#delivery-item").css("display", "block");
+  } else if (option.id === "option-3") {
+    $("#credit").css("display", "block");
+  } else if (option.id === "option-4") {
+    $("#org").css("display", "block");
+  } 
 }
 
 function changePrice(selectObject) {
@@ -54,15 +81,15 @@ function changePrice(selectObject) {
         option.dataset.product
       ).innerText = numberWithCommas(data.price);
     } else {
-      showError("Error Loading Product Price From Database Status: " + xhttpReq.status);
+      showError(
+        "Error Loading Product Price From Database Status: " + xhttpReq.status
+      );
     }
   };
 
   xhttpReq.onerror = () => {
-
-    var message = "Error Loading Product http POST Error"
+    var message = "Error Loading Product http POST Error";
     showError(message);
-    console.log(message);
   };
 
   // xhttpReq.onprogress = (event) => {
@@ -75,7 +102,7 @@ function changePrice(selectObject) {
 function clickplus(tBox, productId, bundleId) {
   var value = parseInt(tBox.value);
 
-  if (value < 1) {
+  if (isNaN(value) || value < 1) {
     return showError(
       "Product Quantity cannot be less than 1, instead of 0 quantity delete product from cart"
     );
@@ -103,18 +130,73 @@ function clickplus(tBox, productId, bundleId) {
     var data = xhttpReq.response;
 
     if (!(xhttpReq.readyState === 4 && xhttpReq.status === 201)) {
-      return showError("Error Ammending Shopping Cart");
+      return showError("Error Amending Shopping Cart");
     }
 
     window.location.href = "/products/shopping-cart";
   };
 
   xhttpReq.onerror = () => {
-    showError("Network Error");
-    console.log("Network Error");
+    showError("Network Error Handling clickplus Event");
   };
 
   xhttpReq.send(json);
+}
+
+function processPayment() {
+  // Get the Value of the Option selected
+  var value = $("input[name='options']:checked").val();
+
+  if (value === "pickup") {
+    payWithPaystack();
+  } else if (value === "deliver") {
+    // Ensure (a) user is logged in (b) minimum value is
+
+    var url = window.origin + "/orders/check-delivery";
+
+    $.ajax({
+      type: "POST",
+      url: url,
+      data: {},
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      headers: {
+        "X-CSRF-Token":  $("#_csrf").val()
+      },
+      success: function (data) {
+       if (data.message === "OK") {
+         payWithPaystack();
+       } else {
+         showError(data.message);
+       }
+      },
+      failure: function(errMsg) {
+        showError(errMsg);
+      }
+    });
+
+    // $.post(url, data => {
+    //   console.log("Success1");
+    //   console.log(data);
+    // })
+    //   .done(data => {
+    //     console.log("Success2");
+    //     console.log(data);
+    //   })
+    //   .fail(data => {
+    //     console.log("failure");
+    //     console.log(data);
+    //   });
+  } else if (value === "credit") {
+    // Ensure (a) user is logged in (b) credit facilities approved
+    showError("Please Contact Ice-Planet on 08188111333 / 08075210001 or info@iceplanet.store, to setup credit facilities");
+    // var url = window.origin + "/orders/check-credit";
+  } else if (value === "org") {
+    // Ensure (a) user is logged in (b) user is an org user (c) credit facilities approved
+    //var url = window.origin + "/orders/check-org";
+
+    showError("Please contact Ice-Planet on 08188111333 / 08075210001 or info@iceplanet.store to setup organizational and/or credit facilities");
+  }
 }
 
 function payWithPaystack() {
@@ -170,16 +252,12 @@ function payWithPaystack() {
 
           xhttpReq2.onerror = () => {
             var message = "Error Saving Paystack backend Payment details";
-
             showError(message);
-            console.log(message);
           };
 
           xhttpReq2.send(json2);
         },
-        onClose: function() {
-          return console.log("window closed");
-        }
+        onClose: function() {}
       });
       handler.openIframe();
     } else {
@@ -191,7 +269,6 @@ function payWithPaystack() {
     var message = "Error Getting Paystack backend Payment details";
 
     showError(message);
-    console.log(message);
   };
 
   xhttpReq.send(json);

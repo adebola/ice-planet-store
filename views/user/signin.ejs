@@ -3,17 +3,18 @@
 <div class="card mx-auto mt-5" style="max-width: 500px;">
   <div class="card">
     <article class="card-body">
-
-        <div class="row">
-            <div class="col-md-9">
-                <h4 class="card-title mt-3 text-center text-md-left">Sign Into Your Account</h4>
-            </div>
-            <div class="col-md-3">
-               <div class="container mx-auto mb-3" style="max-width: 100px;">
-                <img src="/images/logo.png" class="img-fluid" />
-                </div>
-            </div>
+      <div class="row">
+        <div class="col-md-9">
+          <h4 class="card-title mt-3 text-center text-md-left">
+            Sign Into Your Account
+          </h4>
+        </div>
+        <div class="col-md-3">
+          <div class="container mx-auto mb-3" style="max-width: 100px;">
+            <img src="/images/logo.png" class="img-fluid" />
           </div>
+        </div>
+      </div>
       <hr />
 
       <form action="/users/signin" method="POST">
@@ -21,7 +22,9 @@
         <div class="form-group">
           <div class="input-group">
             <div class="input-group-prepend">
-              <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+              <span class="input-group-text">
+                <i class="fal fa-user"></i>
+              </span>
             </div>
             <input
               name="email"
@@ -36,7 +39,9 @@
         <div class="form-group">
           <div class="input-group">
             <div class="input-group-prepend">
-              <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+              <span class="input-group-text">
+                <i class="far fa-lock-open-alt"></i>
+              </span>
             </div>
             <input
               class="form-control"
@@ -54,15 +59,16 @@
         <!-- form-group// -->
       </form>
       <div class="row">
-          <div class="col-6">
-              <a href="/users/forgotpassword" class="btn btn-outline-warning">Forgot password</a>
-          </div>
-          <div class="col-6 text-right">
-              <a href="/users/signup" class="btn btn-outline-warning">SignUp</a>
-          </div>
+        <div class="col-6">
+          <a href="/users/forgotpassword" class="btn btn-outline-warning"
+            >Forgot password</a
+          >
         </div>
+        <div class="col-6 text-right">
+          <a href="/users/signup" class="btn btn-outline-warning">SignUp</a>
+        </div>
+      </div>
     </article>
-    
   </div>
   <!-- card.// -->
 </div>

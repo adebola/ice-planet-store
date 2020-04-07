@@ -1,16 +1,18 @@
 <% include ../partials/header %>
 <link rel="stylesheet" href="/stylesheets/shopping-cart.css" />
+<link rel="stylesheet" href="/stylesheets/option.css"/>
 <div id="error-caption" class="container mt-3">
 
 </div>
 <input type="hidden" id="_csrf" value="<%=csrfToken%>" />
+<div class="error-caption"></div>
 
 
 <% if (products) { %>
 <div class="container">
   <div class="card shopping-cart">
     <div class="card-header bg-dark text-light">
-      <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+      <i class="fad fa-shopping-cart" aria-hidden="true"></i>
       Shopping cart
       <a href="/products" class="btn btn-outline-warning btn-sm float-right"
         >Continue Shopping</a
@@ -97,12 +99,111 @@
       </div>
       <hr />
       <% } }); }); %>
-      <!-- END PRODUCT -->
+       <!-- END PRODUCT -->
+      <div class="row" id="delivery-item" style="display: none;">
+        <div class="col-md-2 col-12 col-sm-12 text-center">
+          <i class="fal fa-shuttle-van fa-2x"></i>
+        </div>
+
+        <div
+          class="col-12 col-sm-12 text-center text-md-right text-lg-left col-md-5"
+        >
+          <h4 class="product-name"><strong>Delivery</strong></h4>
+          <h4>
+            <small class="text-muted"
+              >SubTotal : &#x20A6;1,000</small
+            >
+          </h4>
+        </div>
+        <hr>
+      </div>
+      
     </div>
+
+    <div class="option-group-container  container">
+    <div class="option-group">
+      <div class="option-container">
+    
+        <input class="option-input" checked id="option-1" type="radio" name="options" value="pickup" onchange="handleOptions(this)"/>
+        <input class="option-input" id="option-2" type="radio" name="options" value="deliver" onchange="handleOptions(this)"/>
+        
+        <label class="option" for="option-1">
+          <span class="option__indicator"></span>
+          <span class="option__label">
+            <sub>pickup</sub>
+          </span>
+        </label>
+    
+        <label class="option" for="option-2">
+          <span class="option__indicator"></span>
+          <span class="option__label">
+            <sub>deliver</sub>
+          </span>
+        </label>
+    
+      </div>
+    </div>
+    <div class="option-group">
+      <div class="option-container">
+    
+        <input class="option-input" id="option-3" type="radio" name="options" value="credit" onchange="handleOptions(this)"/>
+        <input class="option-input" id="option-4" type="radio" name="options" value="org" onchange="handleOptions(this)"/>
+        
+        <label class="option" for="option-3">
+          <span class="option__indicator"></span>
+          <span class="option__label">
+            <sub>credit</sub>
+          </span>
+        </label>
+    
+        <label class="option" for="option-4">
+          <span class="option__indicator"></span>
+          <span class="option__label">
+            <sub>org</sub>
+          </span>
+        </label>
+    
+      </div>
+    </div>
+    </div>
+
+    <div class="alert alert-primary cart-info" id="pickup">
+      <h4> In the light of the recent COVID-19 Pandemic</h4>
+      <p> Pickup will only be available on Mondays, Wednesdays, Thursdays and Saturdays between 10am and 2pm </p>
+      <p><em> Please remember to stay Safe!</em></p>  
+    </div>
+
+    <div class="alert alert-primary cart-info" id="deliver">
+      Please note the following for Home delivery
+      <ul>
+        <li>The Minimum Order Value is &#x20A6 5,000</li>
+        <li>The Delivery Range is between Lekki Phase 1 up to Abraham Adesanya Roundabout</li>
+        <li>Finally users must have signedUp and Logged In for Home delivery</li>
+        <li>Additionally due to the recent COVID-19 Pandemic, deliveries will only be done on Mondays, Wednesdays, Thursdays and Saturdays</li>
+      </ul>
+    </div>
+
+    <div class="alert alert-primary cart-info" id="credit">
+      Please note the following for credit sales
+      <ul>
+        <li>Please ensure the necessary arrangements have been made with Ice-Planet for credit sales</li>
+        <li>Additionally the user must have signed up and logged onto the system</li>
+      </ul>
+    </div>
+
+    <div class="alert alert-primary cart-info" id="org">
+      Please note the following for organizational sales
+      <ul>
+        <li> Please ensure the necessary arrangements have been made with Ice-Planet for organizational sales</li>
+        <li>Additionally the user must have signed up and logged onto the system</li>
+      </ul>
+     
+    </div>
+
     <div class="card-footer">
       <div class="float-right" style="margin: 10px">
         <!-- <a href="/orders/start-transaction" class="btn btn-success float-right">Checkout</a> -->
-        <button class="btn btn-success float-right" onclick="payWithPaystack()">Checkout</button>
+        <button class="btn btn-success float-right" onclick="processPayment()">Checkout</button>
         <div class="float-right" style="margin: 5px">
           Total price: <b>&#x20A6;<%= totalPrice %></b>
         </div>
@@ -110,6 +211,7 @@
     </div>
   </div>
 </div>
+
 <% } else { %>
 
 <div class="container">

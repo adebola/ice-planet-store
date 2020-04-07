@@ -51,7 +51,7 @@ body {
   animation-delay: 10s; 
 }
 .slideshow li:nth-child(3) {
-  background-image: url(/images/fish3.jpg);
+  background-image: url(/images/fish5.jpg);
   animation-delay: 20s;
 }
 .slideshow li:nth-child(4) {

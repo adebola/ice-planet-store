@@ -1,0 +1,129 @@
+<% include ../partials/header %>
+
+<div class="card mx-auto mt-3 mb-5" style="max-width: 500px;">
+  <div class="card">
+    <article class="card-body">
+      <div class="row">
+        <div class="col-md-9">
+          <h4 class="card-title mt-3 text-center text-md-left">
+            Order History
+          </h4>
+        </div>
+        <div class="col-md-3">
+          <div class="container mx-auto mb-3" style="max-width: 100px;">
+            <img src="/images/logo.png" class="img-fluid" />
+          </div>
+        </div>
+      </div>
+      <hr />
+
+      <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
+
+      <div class="row d-flex justify-content-center">
+        <div class="accordion" id="accordionExample" style="width: 400px;">
+          <% for (var i = 0; i < orders.length; i++) { %>
+
+          <div class="card">
+            <div class="card-header" id="heading-<%=i%>">
+              <h5 class="mb-0">
+                <button
+                  class="btn btn-link"
+                  type="button"
+                  data-toggle="collapse"
+                  data-target="#collapse<%=i%>"
+                  aria-expanded="true"
+                  aria-controls="collapse<%=i%>"
+                >
+                  <%= orders[i].date.toDateString() %>
+                </button>
+              </h5>
+            </div>
+
+            <div
+              id="collapse<%=i%>"
+              class="collapse"
+              aria-labelledby="heading-<%=i%>"
+              data-parent="#accordionExample"
+            >
+              <div class="card-body">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-12">
+                      Time: <%=orders[i].date.toLocaleTimeString();%>
+                    </div>
+                  </div>
+                </div>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Item</th>
+                      <th scope="col">Qty</th>
+                      <th scope="col">Price</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% var j = 1; var items = orders[i].cart.items; const keys =
+                    Object.keys(items); for (const key of keys) {
+                    items[key].bundles.forEach((bundle) => { if (bundle.qty > 0)
+                    { %>
+                    <tr>
+                      <th scope="row"><%=j%></th>
+                      <th><%=items[key].name%></th>
+
+                      <th><%=bundle.qty%> - <%=bundle.unit%></th>
+                      <th>&#x20A6;<%=bundle.price * bundle.qty%></th>
+                    </tr>
+
+                    <% }}); j = j + 1; } %>
+                  </tbody>
+                </table>
+                <hr />
+                <div class="container">
+                  <div class="row">
+                    <div class="col-12 d-flex justify-content-end">
+                      Total Price: &#x20A6;<%=orders[i].cart.totalPrice%>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% } %>
+        </div>
+      </div>
+
+      <% if (pages > 0) { %>
+      <ul class="pagination text-center mt-2">
+        <% if (current == 1) { %>
+        <li class="page-item disabled"><a class="page-link">First</a></li>
+        <% } else { %>
+        <li class="page-item">
+          <a class="page-link" href="/users/history/1">First</a>
+        </li>
+        <% } %> <% var i = (Number(current) > 5 ? Number(current) - 4 : 1) %> <%
+        if (i !== 1) { %>
+        <li class="page-item disabled"><a class="page-link">...</a></li>
+        <% } %> <% for (; i <= (Number(current) + 4) && i <= pages; i++) { %> <%
+        if (i == current) { %>
+        <li class="page-item active"><a class="page-link"><%= i %></a></li>
+        <% } else { %>
+        <li>
+          <a class="page-link" href="/users/history/<%= i %>"><%= i %></a>
+        </li>
+        <% } %> <% if (i == Number(current) + 4 && i < pages) { %>
+        <li class="page-item disabled"><a class="page-link">...</a></li>
+        <% } %> <% } %> <% if (current == pages) { %>
+        <li class="page-item disabled"><a class="page-link">Last</a></li>
+        <% } else { %>
+        <li class="page-item">
+          <a class="page-link" href="/users/history/<%= pages %>">Last</a>
+        </li>
+        <% } %>
+      </ul>
+      <% } %>
+    </article>
+  </div>
+</div>
+
+<% include ../partials/footer %>

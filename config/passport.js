@@ -5,7 +5,8 @@ const crypto = require("crypto");
 
 const User = require("../models/user");
 const Token = require("../models/token");
-const sendMail = require('../utils/sendmail');
+const mail = require('../utils/sendmail');
+const logger = require('../config/winston');
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -40,16 +41,20 @@ passport.use(
         //   messages.push(element.msg);
         // });
 
+        logger.error("passport.use(local.signup) => Error : " + errors[0]);
+
         return done(null, false, req.flash("error", messages));
       }
 
       User.findOne({ email: email }, (err, user) => {
         if (err) {
+          logger.error("passport.use(local.signup) => Error User.findOne: " + err.message);
           req.flash("error", err);
           return done(err);
         }
 
         if (user) {
+          logger.info("passport.use(local.signup) => User already exists : " + user.email);
           req.flash("error", "E-mail already in use");
           return done(null, false);
         }
@@ -65,10 +70,9 @@ passport.use(
             newUser.telephoneNumber = req.body.telephone;
           }
 
-          // console.log("User Mail : " + newUser.email);
-          // console.log("User Password : " + newUser.password);
-          // console.log("User FullName : " + newUser.fullName);
-          // console.log("User Telephone Number : " + newUser.telephoneNumber);
+          if (req.body.address && req.body.address.length > 0) {
+            newUser.address = req.body.address;
+          }
 
           newUser.save((err, result) => {
             if (err) {
@@ -83,10 +87,12 @@ passport.use(
 
             token.save((err, token) => {
               if (err) {
-                console.log("Unable to Create Token in Database: " + err);
+                logger.error("passport(local.signup) => Error Unable to Create Token in Database: " + err);
                 req.flash("error", err.msg);
                 return done(err);
               }
+
+              logger.info("passport(local.signup) => NewUser : " + newUser.email + " Created Successfully");
 
               var text =
                 "Hello " +
@@ -97,9 +103,7 @@ passport.use(
                 token.token +
                 ".\n";
 
-                sendMail(newUser.email,text, 'IcePlanet Store Activation Link');
-
-                console.log(text);
+                mail.sendMail(newUser.email,text, 'IcePlanet Store Activation Link');
 
               // middleware.sendMail(
               //   user.username,
@@ -129,12 +133,7 @@ passport.use(
       check("email", "Invalid E-Mail").isEmail();
       check("passowrd", "Invalid E-Password").isLength({ min: 5 });
 
-      console.log("email : " + email);
-      console.log("password : " + password);
-
       const errors = validationResult(req);
-
-      
 
       // var messages = [];
 
@@ -168,6 +167,7 @@ passport.use(
 
         user.validPassword(password, user.password, (err, result) => {
           if (result) {
+            logger.info("user: " + user.email + " logged onto the system");
             return done(null, user);
           } else {
             req.flash("error", "Wrong UserName or Password");

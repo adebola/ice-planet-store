@@ -1,5 +1,117 @@
 <% include ../partials/header %>
 
-<h1>Profile Page</h1>
+<div class="card mx-auto mt-5" style="max-width: 500px;">
+  <article class="card-body">
+    <div class="row">
+      <div class="col-md-9">
+        <h4 class="card-title mt-3 text-center text-md-left">
+          Profile
+        </h4>
+      </div>
+      <div class="col-md-3">
+        <div class="container mx-auto mb-3" style="max-width: 100px;">
+          <img src="/images/logo.png" class="img-fluid" />
+        </div>
+      </div>
+    </div>
+
+    <form action="/users/profile" method="POST">
+      <input type="hidden" name="_csrf" value="<%=csrfToken%>" />
+
+      <!-- FullName Input -->
+      <div class="form-group input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text"> <i class="fal fa-user"></i> </span>
+        </div>
+        <input
+          name="fullname"
+          class="form-control"
+          placeholder="Full Name"
+          type="text"
+          value="<%=user.fullName%>"
+          required
+        />
+      </div>
+
+      <!-- E-mail Input -->
+      <div class="form-group input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text"> <i class="fal fa-envelope"></i> </span>
+        </div>
+        <input
+          name="email"
+          class="form-control"
+          placeholder="Email address"
+          type="email"
+          value="<%=user.email%>"
+          disabled
+        />
+      </div>
+      <!-- Telephone Number -->
+      <div class="form-group input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text"> <i class="fal fa-phone"></i> </span>
+        </div>
+        <input
+          name="telephone"
+          class="form-control"
+          placeholder="Phone number"
+          value="<%=user.telephoneNumber ? user.telephoneNumber : ''%>"
+          type="text"
+        />
+      </div>
+
+      <!-- Organization -->
+      <div class="form-group input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text"> <i class="far fa-sitemap"></i> </span>
+        </div>
+        <input
+          name="organization"
+          class="form-control"
+          placeholder="Organization"
+          value="<%=user.organization ? user.organization : ''%>"
+          disabled
+          type="text"
+        />
+      </div>
+
+      
+
+      <div class="form-group input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text"><i class="fal fa-map-marker-alt"></i></span>
+        </div>
+
+        <textarea  class="form-control" id="txtAddress" name="address" cols="60" rows="10" placeholder="Address (Your address is needed For delivery)">
+          <%=user.address ? user.address : '' %>
+        </textarea>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-group">
+        <input
+          type="submit"
+          class="btn btn-warning btn-block"
+          value="Update Profile"
+        />
+      </div>
+
+      <!-- Login Link -->
+
+      <div class="row">
+        <div class="col-5">
+        </div>
+        <div class="col-7">
+          <p class="text-right">
+          <a href="/users/changepassword" class="btn btn-outline-warning">Change Password</a>
+          </p>
+        </div>
+      </div>
+    </form>
+  </article>
+</div>
+
+<script type="text/javascript" src="/javascripts/script.js"></script>
 
 <% include ../partials/footer %>

@@ -1,18 +1,25 @@
 <% include ../partials/header %>
 
 <link rel="stylesheet" href="/stylesheets/product.css" />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css"
+  integrity="sha256-HAaDW5o2+LelybUhfuk0Zh2Vdk8Y2W2UeKmbaXhalfA="
+  crossorigin="anonymous"
+/>
+
 <input type="hidden" id="_csrf" value="<%=csrfToken%>" />
-<div id="error-caption" class="container mt-3">
+<div id="error-caption" class="container mt-3"></div>
 
+<% if (errMessage) { %>
+<div class="alert alert-danger">
+  <p><%= errMessage %></p>
 </div>
-
-
+<% } %>
 
 <div class="container text-center mb-3">
   <h1>Welcome to Ice Planet Store</h1>
 </div>
-
-
 
 <!-- <div class="d-flex justify-content-center mb-3 ">
     <button type="button" class="btn btn-warning" disabled>  
@@ -24,8 +31,7 @@
     </button>  
 </div> -->
 
-
-<div class="container">
+<div class="container" style="margin-bottom: 20px;">
   <div class="row text-center" style="display: flex; flex-wrap: wrap;">
     <% products.forEach((product) => { %>
     <div class="col-xl-3 col-lg-4 col-md-6">
@@ -35,17 +41,30 @@
           <div class="img-wrap">
             <img src="<%= product.imagePath %>" />
             <button
-              class="btn btn-outline-warning btn-sm btn-top-right" type="submit"
+              class="btn btn-warning btn-sm btn-top-right"
+              type="submit"
               style="border: none;"
             >
-              <i class="fas fa-plus"></i>
+              <i class="fal fa-shopping-cart"></i>
             </button>
-            <a class="btn-overlay" href="#"
+            <a
+              class="btn-overlay"
+              href="<%= product.imagePath %>"
+              data-toggle="lightbox"
+              data-title="<%= product.name %>"
+              data-footer="<%= product.description %>"
               ><i class="fa fa-search-plus"></i> Quick view</a
             >
           </div>
           <figcaption class="info-wrap">
-            <a href="#" class="title"><%= product.name %></a>
+            <a
+              href="<%= product.imagePath %>"
+              data-toggle="lightbox"
+              data-title="<%= product.name %>"
+              data-footer="<%= product.description %>"
+              class="title"
+              ><%= product.name %></a
+            >
 
             <div class="action-wrap">
               <div class="price-wrap h5">
@@ -81,15 +100,14 @@
               </div>
 
               <!-- <div class="price-wrap mt-1"> -->
-                <div class="row ml-0">
-                  <div class="col-8 price-wrap ml-0 pl-0">
-                    <span class="ml-0 pl-0">&#x20A6;</span>
-                    <span class="price-new" name="price" id="<%= product._id %>">
-                      <%= product.bundles[0].price %> / 
-                      <%= product.bundles[0].unit %>
-                    </span>
-                  </div>
+              <div class="row ml-0">
+                <div class="col-12 price-wrap ml-0 pl-0">
+                  <span class="ml-0 pl-0">&#x20A6;</span>
+                  <span name="price" id="<%= product._id %>">
+                    <%= product.bundles[0].price %> 
+                  </span>
                 </div>
+              </div>
               <!-- </div> -->
 
               <!-- price-wrap.// -->
@@ -102,6 +120,8 @@
     </div>
     <% }); %>
   </div>
+
+  <br><br>
 </div>
 
 <script type="text/javascript" src="/javascripts/script.js"></script>

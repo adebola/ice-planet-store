@@ -8,6 +8,9 @@ var UserSchema = new mongoose.Schema ({
   isVerified: {type: Boolean, required: true, default: false},
   fullName: {type: String, required: true},
   telephoneNumber: {type: String},
+  address: {type: String},
+  creditUser:{type: Boolean, required: true, default: false},
+  organization: {type: String},
   avatarImage: {type: String},
   passwordResetToken: {type: String},
   passwordResetExpires: {type: Date}

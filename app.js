@@ -9,19 +9,17 @@ const passport = require("passport");
 const flash = require("connect-flash");
 const mongoStore = require("connect-mongo")(session);
 const favicon = require("serve-favicon");
-
 const config = require("./config/passport");
 
 const indexRouter = require("./routes/index");
 const userRouter = require("./routes/users");
 const productRouter = require('./routes/products');
 const orderRouter = require('./routes/orders');
-
 const logger = require('./config/winston');
 
 const app = express();
 
-// const seed = require('./seed');
+//const seed = require('./seed');
 
 mongoose.connect(
   process.env.DATABASEURL,
@@ -29,12 +27,10 @@ mongoose.connect(
     useUnifiedTopology: true
   })
   .then(() => {
-    console.log("Connected to MongoDB");
     logger.info("Connected to Mongo Database Successfully");
   })
   .catch(err => {
-    console.log("Database Connection Error: " + err.message);
-    logger.error("MongoDB Connection Failed: " + err);
+    logger.error("MongoDB Connection Failed: " + err.message);
   });
 
   //seed();
@@ -56,17 +52,18 @@ app.use(
     cookie: { maxAge: 180 * 60 * 1000 }
   })
 );
-app.use(flash());
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
+app.use(flash());
 
 app.use((req, res, next) => {
   res.locals.login = req.isAuthenticated();
   res.locals.session = req.session;
-  res.locals.success = req.flash("success");
-  res.locals.err = req.flash("error");
+  res.locals.successMsg = req.flash("success");
+  res.locals.errorMsg = req.flash("error");
   res.locals.currentUser = req.user;
   next();
 });
@@ -91,7 +88,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render("error");
+  res.render("error/error");
 });
 
 module.exports = app;

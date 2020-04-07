@@ -19,9 +19,11 @@
   text-align: center;
 }
 .card-product .img-wrap img {
-  max-height: 100%;
-  max-width: 100%;
-  width: auto;
+  width: 100%;
+  height: 100%;
+  /* max-height: 100%; */
+  /* max-width: 100%; */
+  /* width: auto; */
   display: inline-block;
   -o-object-fit: cover;
   object-fit: cover;
@@ -89,10 +91,10 @@
   max-width: 100%;
 }
 
-.price-new,
+/* .price-new,
 .price {
-  margin-right: 5px;
-}
+  margin-left: 0px;
+} */
 
 .price-old {
   color: #999;
