@@ -567,18 +567,24 @@ function seedDB() {
     }
   });
 
-  User.create({
-    isVerified: false,
-    email: 'anonymous@factorialsystems.io',
-    fullname: 'Anonymous'
-
-  }, (err, anonymousUser) => {
+  let user = new User();
+  user.email = 'anonymous@factorialsystems.io';
+  user.fullName = 'Anonymous';
+  user.password = user.encryptPassword(process.env.SECRETACCESSKEY, (err, hashPassword) => {
     if (err) {
-      return console.log("Error seeding database with Anonymous User : " + err);
+      return console.log("Error creating hashPassword for Anonymous User");
     }
 
-    console.log('Database has been successfully seeded with Anonymous User ' + anonymousUser._id);
-  });
+    user.password = hashPassword;
+
+    user.save((err, anonymousUser) => {
+      if (err) {
+        return console.log("Error saving Anonymous User to the Database : " + err);
+      }
+
+      console.log('Database has been successfully seeded with Anonymous User ' + anonymousUser._id);
+    });
+  }); 
 }
 
 module.exports = seedDB;
