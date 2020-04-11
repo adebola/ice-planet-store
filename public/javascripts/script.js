@@ -15,7 +15,7 @@ function showMessage(message, status) {
   var errordiv = document.getElementById("error-caption");
 
   // Clear Earlier Messages
-  while(errordiv.firstChild) {
+  while (errordiv.firstChild) {
     errordiv.firstChild.remove();
   }
 
@@ -93,14 +93,15 @@ function changePrice(selectObject) {
       ).innerText = numberWithCommas(data.price);
     } else {
       showMessage(
-        "Error Loading Product Price From Database Status: " + xhttpReq.status, 'error'
+        "Error Loading Product Price From Database Status: " + xhttpReq.status,
+        "error"
       );
     }
   };
 
   xhttpReq.onerror = () => {
     var message = "Error Loading Product http POST Error";
-    showMessage(message, 'error');
+    showMessage(message, "error");
   };
 
   // xhttpReq.onprogress = (event) => {
@@ -115,7 +116,8 @@ function clickplus(tBox, productId, bundleId) {
 
   if (isNaN(value) || value < 1) {
     return showMessage(
-      "Product Quantity cannot be less than 1, instead of 0 quantity delete product from cart", 'error'
+      "Product Quantity cannot be less than 1, instead of 0 quantity delete product from cart",
+      "error"
     );
   }
 
@@ -201,7 +203,8 @@ function processPayment() {
   } else if (value === "credit") {
     // Ensure (a) user is logged in (b) credit facilities approved
     showMessage(
-      "Please Contact Ice-Planet on 08188111333 / 08075210001 or info@iceplanet.store, to setup credit facilities", "error"
+      "Please Contact Ice-Planet on 08188111333 / 08075210001 or info@iceplanet.store, to setup credit facilities",
+      "error"
     );
     // var url = window.origin + "/orders/check-credit";
   } else if (value === "org") {
@@ -209,7 +212,8 @@ function processPayment() {
     //var url = window.origin + "/orders/check-org";
 
     showMessage(
-      "Please contact Ice-Planet on 08188111333 / 08075210001 or info@iceplanet.store to setup organizational and/or credit facilities", "error"
+      "Please contact Ice-Planet on 08188111333 / 08075210001 or info@iceplanet.store to setup organizational and/or credit facilities",
+      "error"
     );
   }
 }
@@ -276,20 +280,20 @@ function payWithPaystack() {
       });
       handler.openIframe();
     } else {
-      showMessage(indata, 'error');
+      showMessage(indata, "error");
     }
   };
 
   xhttpReq.onerror = () => {
     var message = "Error Getting Paystack backend Payment details";
 
-    showMessage(message, 'error');
+    showMessage(message, "error");
   };
 
   xhttpReq.send(json);
 }
 
-function fulfillOrder(orderId) {
+function fulfillOrder(orderId, button) {
   // $('#displayModal').on('show.bs.modal', () => {
   //   const div = $('.modal-body');
   //   console.log(div);
@@ -298,7 +302,6 @@ function fulfillOrder(orderId) {
   // return $('#displayModal').modal('show');
 
   var url = window.origin + "/orders/fulfill";
-  console.log(url);
 
   $.ajax({
     type: "POST",
@@ -310,17 +313,16 @@ function fulfillOrder(orderId) {
       "X-CSRF-Token": $("#_csrf").val(),
     },
     success: function (data) {
-      $("#btnfulfilled").removeClass("btn-warning");
-      $("#btnfulfilled").addClass("btn-success");
-      showMessage(data.message, 'success');
+      button.className = "btn btn-success";
+      showMessage(data.message, "success");
     },
     failure: function (errMsg) {
-      showMessage(errMsg, 'error');
+      showMessage(errMsg, "error");
     },
   });
 }
 
-function verifyPayment(orderId) {
+function verifyPayment(orderId, button) {
   var url = window.origin + "/orders/verifypayment";
 
   $.ajax({
@@ -333,13 +335,12 @@ function verifyPayment(orderId) {
       "X-CSRF-Token": $("#_csrf").val(),
     },
     success: function (data) {
-      $("#btnverify").removeClass("btn-warning");
-      $("#btnverify").addClass("btn-success");
+      button.className = "btn btn-success";
       console.log(data);
-      showMessage(data.message, 'success');
+      showMessage(data.message, "success");
     },
     failure: function (errMsg) {
-      showMessage(errMsg, 'error');
+      showMessage(errMsg, "error");
     },
   });
 }

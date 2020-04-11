@@ -35,7 +35,7 @@
                     <button
                       id="btnfulfilled"
                       class="btn btn-success"
-                      onClick="fulfillOrder('<%= order._id %>')"
+                      onClick="fulfillOrder('<%= order._id %>', this)"
                     >
                       <i class="fal fa-truck-loading"></i>
                     </button>
@@ -43,7 +43,7 @@
                     <button
                       id="btnfulfilled"
                       class="btn btn-warning"
-                      onClick="fulfillOrder('<%= order._id %>')"
+                      onClick="fulfillOrder('<%= order._id %>', this)"
                     >
                       <i class="fal fa-truck-loading"></i>
                     </button>
@@ -51,7 +51,7 @@
                     <button
                       id="btnverify"
                       class="btn btn-success"
-                      onClick="verifyPayment('<%= order._id %>')"
+                      onClick="verifyPayment('<%= order._id %>', this)"
                     >
                       <i class="fal fa-sack-dollar"></i>
                     </button>
@@ -59,7 +59,7 @@
                     <button
                       id="btnverify"
                       class="btn btn-warning"
-                      onClick="verifyPayment('<%= order._id %>')"
+                      onClick="verifyPayment('<%= order._id %>', this)"
                     >
                       <i class="fal fa-sack-dollar"></i>
                     </button>
