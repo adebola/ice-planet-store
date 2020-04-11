@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const sendMail = require("../utils/sendmail");
+const mail = require("../utils/sendmail");
 const Token = require("../models/token");
 const User = require("../models/user");
 const Order = require("../models/order");
@@ -12,7 +12,7 @@ exports.changePassword = (req, res, next) => {
         foundUser.encryptPassword(req.body.password, (errencrypt, hashPwd) => {
           if (errencrypt) {
             req.flash("error", "Password Encryption Error");
-            log.error(errencrypt);
+            logger.error(errencrypt);
 
             return res.redirect("/users/changepassword");
           }
@@ -62,7 +62,6 @@ exports.renderChangePassword = (req, res, next) => {
 };
 
 exports.getProfile = (req, res, next) => {
-
   // Get Current User and send to Template to render
   if (!req.user) {
     // We really shouldnt be here, but nonetheless
@@ -72,14 +71,12 @@ exports.getProfile = (req, res, next) => {
 
   res.render("user/profile", {
     user: req.user,
-    csrfToken: req.csrfToken()
+    csrfToken: req.csrfToken(),
   });
 };
 
 exports.postProfile = (req, res, next) => {
-
   if (req.user && req.user.email) {
-
     User.updateOne(
       { email: req.user.email },
       {
@@ -89,31 +86,20 @@ exports.postProfile = (req, res, next) => {
       }
     )
       .then((data) => {
+        req.flash("success", "Profile has been amended successfully");
 
-        req.flash(
-          "success",
-          "Profile has been amended successfully"
-        );
-
-        logger.info('User : ' + req.user.email + ' updated successfully');
+        logger.info("User : " + req.user.email + " updated successfully");
         return res.redirect("/users/profile");
       })
       .catch((errMessage) => {
         console.log(errMessage);
 
-        req.flash(
-          "error",
-          "Error updating profile : " + errMessage
-        );
+        req.flash("error", "Error updating profile : " + errMessage);
 
         return res.redirect("/users/profile");
       });
   } else {
-
-    req.flash(
-      "error",
-      "You must be logged in to change your profile"
-    );
+    req.flash("error", "You must be logged in to change your profile");
 
     return res.redirect("/users/profile");
   }
@@ -174,7 +160,7 @@ exports.changeForgotPassword = (req, res, next) => {
         foundUser.encryptPassword(req.body.password, (errencrypt, hashPwd) => {
           if (errencrypt) {
             req.flash("error", "Password Encryption Error");
-            log.error(errencrypt);
+            logger.error(errencrypt);
 
             return res.redirect("/users/forgotpassword");
           }
@@ -227,38 +213,41 @@ exports.forgotPassword = (req, res, next) => {
       if (foundUser) {
         if (foundUser.isVerified) {
           var token = crypto.randomBytes(16).toString("hex");
+
           foundUser.passwordResetToken = token;
           foundUser.passwordResetExpires = Date.now() + 3600000;
 
+          //User.findOneAndUpdate({_id: foundUser._id}, {$set: {passwordResetToken: token, passwordResetExpires: Date.now() + 3600000}})
+
           foundUser
-            .save()
-            .then((savedUser) => {
+            .save((err, savedUser) => {
+              if (err) {
+                req.flash("error", "Internal Error saving generated token");
+                logger.error(err);
+
+                return res.redirect("/users/forgotpassword");
+              }
+
               var text =
-                "Your are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n" +
+                "Your are receiving this because you (or someone else) has requested the reset of the password on your account.\n\n" +
                 "Please click on the following link, or paste into your browser to complete the process: \n\n" +
-                "http://" +
+                "https://" +
                 req.headers.host +
                 "/users/forgotpassword/" +
                 token +
                 "\n\n" +
                 "If you did not request this, please ignore this email and your password will remain unchanged.\n";
 
-              sendMail(
+              mail.sendMail(
                 foundUser.email,
                 text,
                 "IcePlanet Store Password Reset Request"
               );
               req.flash(
                 "success",
-                "Password Reset request successful, please check your e-mail and follow instructions"
+                "Password Reset request is successful, please check your e-mail and follow the instructions"
               );
               res.redirect("/users/forgotpassword");
-            })
-            .catch((err) => {
-              req.flash("error", "Internal Error saving generated token");
-              logger.error(err);
-
-              return res.redirect("/users/forgotpassword");
             });
         } else {
           req.flash(
@@ -297,7 +286,7 @@ exports.confirmToken = (req, res) => {
             } else {
               req.flash(
                 "success",
-                "Your account has been activated Succesfully, Please Login"
+                "Your account has been activated Successfully, Please Login"
               );
               res.redirect("/users/signin");
             }
@@ -305,7 +294,7 @@ exports.confirmToken = (req, res) => {
         );
       } else {
         req.flash("error", "Verification Token is invalid or has expired");
-        logger.error(err.message);
+        logger.error("Verification Token is invalid or has expired");
         res.redirect("/users/verify");
       }
     }
@@ -346,14 +335,15 @@ exports.postVerification = (req, res, next) => {
           var text =
             "Hello " +
             foundUser.fullname +
-            "\n\nPlease activate your account by clicking the link:\nhttp://" +
+            "\n\nPlease activate your account by clicking the link:\nhttps://" +
             req.headers.host +
             "/users/confirmation/" +
             token.token +
             ".\n";
 
-          sendMail(foundUser.email, text, "IcePlanet Store Activation Link");
+          mail.sendMail(foundUser.email, text, "IcePlanet Store Activation Link");
 
+          req.flash('success', 'Verification mail sent, please check your e-mail');
           return res.redirect("/users/signin");
         }
       } else {
@@ -420,7 +410,7 @@ exports.orderHistory = (req, res, next) => {
         if (err) {
           var errMessage = "Order.count() error: " + err.message;
 
-          log.error(errMessage);
+          logger.error(errMessage);
 
           return res.render("error/error", {
             csrfToken: req.csrfToken,
@@ -436,4 +426,10 @@ exports.orderHistory = (req, res, next) => {
         });
       });
     });
+};
+
+exports.accessDenied = (req, res, next) => {
+  return res.render('shop/access-denied', {
+    csrfToken: req.csrfToken()
+  });
 };

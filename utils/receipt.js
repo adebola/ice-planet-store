@@ -13,7 +13,7 @@ module.exports = function Receipt(orderId) {
 
   this.createReceipt = async function () {
     Order.findById(orderId)
-      .populate("user")
+      .populate('user')
       .then((order) => {
         logger.info("Saving Pdf file to : " + this.path);
 

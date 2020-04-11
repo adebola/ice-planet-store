@@ -24,8 +24,7 @@ router.post("/verify", UserController.postVerification);
 router.get("/signup", UserController.renderSignup);
 router.get("/changepassword", isLoggedIn, UserController.renderChangePassword);
 router.post("/changepassword/:userId", isLoggedIn, UserController.changePassword);
-//router.post("/updateprofile", UserController.updateProfile);
-
+router.get('/noaccess', UserController.accessDenied);
 router.use("/", notLoggedIn, UserController.defaultPage);
 
 router.post("/signup",

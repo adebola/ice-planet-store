@@ -160,8 +160,9 @@ passport.use(
         if (!user.isVerified) {
           req.flash(
             "error",
-            "User has not been activated, Please click on activation link sent to your mail or request for new acivation link"
+            "User has not been activated, Please click on activation link sent to your mail or request for a new activation by pressing the 'SignUp' button below and then press the 'Resend Verification Mail' button in the page that displayed"
           );
+
           return done(null, false);
         }
 

@@ -3,7 +3,7 @@ function Validate() {
   var confirmPassword = document.getElementById("txtConfirmPassword").value;
 
   if (password != confirmPassword) {
-    showError("Passwords do not Match!!!");
+    showMessage("Passwords do not Match!!!", "error");
     console.log("False");
     return false;
   }
@@ -11,11 +11,22 @@ function Validate() {
   return true;
 }
 
-function showError(message) {
+function showMessage(message, status) {
   var errordiv = document.getElementById("error-caption");
+
+  // Clear Earlier Messages
+  while(errordiv.firstChild) {
+    errordiv.firstChild.remove();
+  }
+
   var alertElement = document.createElement("div");
   alertElement.classList.add("alert");
-  alertElement.classList.add("alert-danger");
+
+  if (status === "error") {
+    alertElement.classList.add("alert-danger");
+  } else {
+    alertElement.classList.add("alert-success");
+  }
   alertElement.innerHTML = message;
   errordiv.appendChild(alertElement);
 }
@@ -50,7 +61,7 @@ function handleOptions(option) {
     $("#credit").css("display", "block");
   } else if (option.id === "option-4") {
     $("#org").css("display", "block");
-  } 
+  }
 }
 
 function changePrice(selectObject) {
@@ -58,7 +69,7 @@ function changePrice(selectObject) {
 
   var data = {
     productId: option.dataset.product,
-    bundleId: option.dataset.bundle
+    bundleId: option.dataset.bundle,
   };
 
   var json = JSON.stringify(data);
@@ -81,15 +92,15 @@ function changePrice(selectObject) {
         option.dataset.product
       ).innerText = numberWithCommas(data.price);
     } else {
-      showError(
-        "Error Loading Product Price From Database Status: " + xhttpReq.status
+      showMessage(
+        "Error Loading Product Price From Database Status: " + xhttpReq.status, 'error'
       );
     }
   };
 
   xhttpReq.onerror = () => {
     var message = "Error Loading Product http POST Error";
-    showError(message);
+    showMessage(message, 'error');
   };
 
   // xhttpReq.onprogress = (event) => {
@@ -103,15 +114,15 @@ function clickplus(tBox, productId, bundleId) {
   var value = parseInt(tBox.value);
 
   if (isNaN(value) || value < 1) {
-    return showError(
-      "Product Quantity cannot be less than 1, instead of 0 quantity delete product from cart"
+    return showMessage(
+      "Product Quantity cannot be less than 1, instead of 0 quantity delete product from cart", 'error'
     );
   }
 
   var data = {
     productId: productId,
     bundleId: bundleId,
-    value: value
+    value: value,
   };
 
   var json = JSON.stringify(data);
@@ -130,14 +141,14 @@ function clickplus(tBox, productId, bundleId) {
     var data = xhttpReq.response;
 
     if (!(xhttpReq.readyState === 4 && xhttpReq.status === 201)) {
-      return showError("Error Amending Shopping Cart");
+      return showMessage("Error Amending Shopping Cart", "error");
     }
 
     window.location.href = "/products/shopping-cart";
   };
 
   xhttpReq.onerror = () => {
-    showError("Network Error Handling clickplus Event");
+    showMessage("Network Error Handling clickplus Event", "error");
   };
 
   xhttpReq.send(json);
@@ -161,18 +172,18 @@ function processPayment() {
       contentType: "application/json; charset=utf-8",
       dataType: "json",
       headers: {
-        "X-CSRF-Token":  $("#_csrf").val()
+        "X-CSRF-Token": $("#_csrf").val(),
       },
       success: function (data) {
-       if (data.message === "OK") {
-         payWithPaystack();
-       } else {
-         showError(data.message);
-       }
+        if (data.message === "OK") {
+          payWithPaystack();
+        } else {
+          showMessage(data.message, "error");
+        }
       },
-      failure: function(errMsg) {
-        showError(errMsg);
-      }
+      failure: function (errMsg) {
+        showMessage(errMsg, "error");
+      },
     });
 
     // $.post(url, data => {
@@ -189,13 +200,17 @@ function processPayment() {
     //   });
   } else if (value === "credit") {
     // Ensure (a) user is logged in (b) credit facilities approved
-    showError("Please Contact Ice-Planet on 08188111333 / 08075210001 or info@iceplanet.store, to setup credit facilities");
+    showMessage(
+      "Please Contact Ice-Planet on 08188111333 / 08075210001 or info@iceplanet.store, to setup credit facilities", "error"
+    );
     // var url = window.origin + "/orders/check-credit";
   } else if (value === "org") {
     // Ensure (a) user is logged in (b) user is an org user (c) credit facilities approved
     //var url = window.origin + "/orders/check-org";
 
-    showError("Please contact Ice-Planet on 08188111333 / 08075210001 or info@iceplanet.store to setup organizational and/or credit facilities");
+    showMessage(
+      "Please contact Ice-Planet on 08188111333 / 08075210001 or info@iceplanet.store to setup organizational and/or credit facilities", "error"
+    );
   }
 }
 
@@ -223,7 +238,7 @@ function payWithPaystack() {
         amount: indata.amount * 100,
         currency: "NGN",
         ref: generateId(16),
-        callback: function(response) {
+        callback: function (response) {
           var xhttpReq2 = new XMLHttpRequest();
           var url2 = window.origin + "/orders/save-transaction";
           xhttpReq2.open("POST", url2, true);
@@ -239,39 +254,94 @@ function payWithPaystack() {
           xhttpReq2.responseType = "json";
 
           var json2 = JSON.stringify({
-            payref: response.reference
+            payref: response.reference,
           });
 
           xhttpReq2.onload = () => {
             if (xhttpReq2.readyState === 4 && xhttpReq2.status === 201) {
               window.location.href = "/products/shopping-cart";
             } else {
-              showError(xhttpReq2.response);
+              showMessage(xhttpReq2.response, "error");
             }
           };
 
           xhttpReq2.onerror = () => {
             var message = "Error Saving Paystack backend Payment details";
-            showError(message);
+            showMessage(message, "error");
           };
 
           xhttpReq2.send(json2);
         },
-        onClose: function() {}
+        onClose: function () {},
       });
       handler.openIframe();
     } else {
-      showError(indata);
+      showMessage(indata, 'error');
     }
   };
 
   xhttpReq.onerror = () => {
     var message = "Error Getting Paystack backend Payment details";
 
-    showError(message);
+    showMessage(message, 'error');
   };
 
   xhttpReq.send(json);
+}
+
+function fulfillOrder(orderId) {
+  // $('#displayModal').on('show.bs.modal', () => {
+  //   const div = $('.modal-body');
+  //   console.log(div);
+  //   div.innerText = 'The Order has been fulfilled (picked up / delivered) successfully';
+  // });
+  // return $('#displayModal').modal('show');
+
+  var url = window.origin + "/orders/fulfill";
+  console.log(url);
+
+  $.ajax({
+    type: "POST",
+    url: url,
+    data: JSON.stringify({ orderId: orderId }),
+    contentType: "application/json; charset=utf-8",
+    dataType: "json",
+    headers: {
+      "X-CSRF-Token": $("#_csrf").val(),
+    },
+    success: function (data) {
+      $("#btnfulfilled").removeClass("btn-warning");
+      $("#btnfulfilled").addClass("btn-success");
+      showMessage(data.message, 'success');
+    },
+    failure: function (errMsg) {
+      showMessage(errMsg, 'error');
+    },
+  });
+}
+
+function verifyPayment(orderId) {
+  var url = window.origin + "/orders/verifypayment";
+
+  $.ajax({
+    type: "POST",
+    url: url,
+    data: JSON.stringify({ orderId: orderId }),
+    contentType: "application/json; charset=utf-8",
+    dataType: "json",
+    headers: {
+      "X-CSRF-Token": $("#_csrf").val(),
+    },
+    success: function (data) {
+      $("#btnverify").removeClass("btn-warning");
+      $("#btnverify").addClass("btn-success");
+      console.log(data);
+      showMessage(data.message, 'success');
+    },
+    failure: function (errMsg) {
+      showMessage(errMsg, 'error');
+    },
+  });
 }
 
 function dec2hex(dec) {

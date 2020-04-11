@@ -64,8 +64,8 @@ exports.getProductBundles = (req, res, next) => {
       }
     })
     .catch(err => {
-      log.error("router.post(/bundle) => Exception in Product.findById()");
-      log.error(err.message);
+      logger.error("router.post(/bundle) => Exception in Product.findById()");
+      logger.error(err.message);
       res.status(500).json({ message: "Internal Error: " + err.message });
     });
 };
@@ -93,7 +93,7 @@ exports.addProductToCart = (req, res, next) => {
           req.session.save();
         } catch (err) {
           var errMessage = "router.post(/add-to-cart/:id) => Error Saving Session : " + err.message
-          log.error(errMessage);
+          logger.error(errMessage);
         }
       } else {
         errMessage = "addProductToCart: Unable to Locate Bundle of Type: " + req.body.type + " in Product:" + productId;
@@ -179,16 +179,6 @@ exports.deleteProductFromCart = (req, res, next) => {
 
   res.redirect("/products/shopping-cart");
 };
-
-// exports.makePayment = (req, res, next) => {
-//   res.render("shop/pay", {
-//     csrfToken: req.csrfToken()
-//   });
-// }
-
-// exports.reportError = (req, res, next) => {
-//   console.log(req.body.data);
-// }
 
 exports.getShoppingCart = (req, res, next) => {
   if (!req.session.cart) {

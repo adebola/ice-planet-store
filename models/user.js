@@ -13,7 +13,8 @@ var UserSchema = new mongoose.Schema ({
   organization: {type: String},
   avatarImage: {type: String},
   passwordResetToken: {type: String},
-  passwordResetExpires: {type: Date}
+  passwordResetExpires: {type: Date},
+  userType: {type: String}
 });
 
 UserSchema.methods.encryptPassword = (password, callback) => {

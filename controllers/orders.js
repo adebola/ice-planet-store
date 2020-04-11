@@ -3,6 +3,8 @@ const User = require("../models/user");
 const logger = require("../config/winston");
 const Receipt = require("../utils/receipt");
 const fs = require("fs");
+const request = require("request-promise");
+const Cart = require('../models/cart');
 
 exports.checkDelivery = (req, res, next) => {
   // Code below was used for testing of the below functionality
@@ -19,12 +21,10 @@ exports.checkDelivery = (req, res, next) => {
   if (req.session.cart) {
     if (req.user && req.session.cart.totalPrice > process.env.MINIMUMPRICE) {
       if (!(req.user.address && req.user.address.length > 5)) {
-        return res
-          .status(201)
-          .jsons({
-            message:
-              "You dont have a valid address on your profile, please click on your name on the menu and select profile to update your address",
-          });
+        return res.status(201).json({
+          message:
+            "You dont have a valid address on your profile, please click on your name on the menu and select profile to update your address",
+        });
       }
 
       return res.status(201).json({
@@ -39,12 +39,10 @@ exports.checkDelivery = (req, res, next) => {
     }
   } else {
     logger.info("Unable to run checkDelivery, session may have expired");
-    return res
-      .status(404)
-      .json({
-        message:
-          "User or Session not set or expired please re-LogIn and Populate the Shopping Cart",
-      });
+    return res.status(404).json({
+      message:
+        "User or Session not set or expired please re-LogIn and Populate the Shopping Cart",
+    });
   }
 };
 
@@ -77,12 +75,10 @@ exports.startTransaction = (req, res, next) => {
     });
   } else {
     logger.info("Unable to run startTransaction, session may have expired");
-    return res
-      .status(404)
-      .json({
-        message:
-          "User or Session not set or expired please re-LogIn and Populate the Shopping Cart",
-      });
+    return res.status(404).json({
+      message:
+        "User or Session not set or expired please re-LogIn and Populate the Shopping Cart",
+    });
   }
 };
 
@@ -95,13 +91,10 @@ exports.saveTransaction = (req, res, next) => {
         { email: process.env.ANONYMOUSUSER },
         (err, anonymousUser) => {
           if (err) {
-            log.error("Database Error, cannot find default User");
-            return req
-              .status(500)
-              .json({
-                message:
-                  "Internal Error, Please contact Ice Planet for support",
-              });
+            logger.error("Database Error, cannot find default User");
+            return res.status(500).json({
+              message: "Internal Error, Please contact Ice Planet for support",
+            });
           } else {
             user = anonymousUser;
           }
@@ -139,11 +132,209 @@ exports.saveTransaction = (req, res, next) => {
       });
   } else {
     logger.info("Unable to run saveTransaction, session may have expired");
-    return res
-      .status(500)
-      .json({
-        message:
-          "User or Session Cart Not set, please re-login session might have expired",
-      });
+    return res.status(500).json({
+      message:
+        "User or Session Cart Not set, please re-login session might have expired",
+    });
   }
 };
+
+exports.manageOrders = (req, res, next) => {
+  const perPage = 10;
+  const page = req.params.page || 1;
+
+  // Load Orders from the Database
+
+  Order.find({})
+    .populate("user")
+    .lean()
+    .skip(perPage * page - perPage)
+    .limit(perPage)
+    .then((orders) => {
+      Order.count().exec((err, count) => {
+        if (err) {
+          logger.error('Error Counting Orders in Database : ' + err);
+          req.flash('Technical Error in Order::Count, Please Contact IcePlanet Support ' + err);
+          return res.redirect('/orders/manage');
+        }
+
+        console.log('count is : ' + count);
+
+        return res.render("order/orderlist", {
+          orders: orders,
+          current: page,
+          pages: Math.ceil(count / perPage),
+          csrfToken: req.csrfToken()
+        });
+      });
+    })
+    .catch((err) => {
+      logger.error("Error Loading Orders ; " + err);
+      req.flash(
+        "err",
+        "There was a network error loading orders, please contact support : " +
+          err
+      );
+      return res.status(500).json({
+        message:
+          "There was a network error loading orders, please contact support : " +
+          err,
+      });
+    });
+};
+
+exports.fulfill = (req, res, next) => {
+  if (req.body && req.body.orderId) {
+    Order.findOne({ _id: req.body.orderId }, (err, order) => {
+      if (err) {
+        logger.error(
+          "Unable to retrieve Order : " + req.body.orderId + " " + err
+        );
+        return res.status(500).json({
+          message: "Unable to retrieve Order : " + req.body.orderId,
+        });
+      }
+
+      if (order.fulfilled == true) {
+        logger.info("Order has already been fulfilled : " + req.body.orderId);
+        return res.status(200).json({
+          message: "Order has already been fulfilled : " + req.body.orderId,
+        });
+      }
+
+      order.fulfilled = true;
+      order
+        .save()
+        .then((savedOrder) => {
+          logger.info("Order fulfilled " + savedOrder._id);
+          return res.status(200).json({
+            message: "Order fulfilled " + savedOrder._id,
+          });
+        })
+        .catch((err) => {
+          logger.error(
+            "Error Saving fulfilled Order : " + req.body.orderId + " " + err
+          );
+          res.status(500).json({
+            message: "Error Saving fulfilled Order : " + req.body.orderId,
+          });
+        });
+    });
+  } else {
+    logger.error("No OrderId submitted");
+    res.status(500).json({
+      message: "No OrderId submitted",
+    });
+  }
+};
+
+exports.verifypayment = (req, res, next) => {
+  if (req.body && req.body.orderId) {
+    Order.findOne({ _id: req.body.orderId }, (err, order) => {
+      if (err) {
+        logger.error(
+          "Unable to retrieve Order : " + req.body.orderId + " " + err
+        );
+        return res.status(500).json({
+          message: "Unable to retrieve Order : " + req.body.orderId,
+        });
+      }
+
+      const options = {
+        url: "https://api.paystack.co/transaction/verify/" + order.paymentId,
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + process.env.PAYSTACKSECRETKEY,
+          "Content-Type": "application/json",
+        },
+      };
+
+      request(options, (err, response, body) => {
+
+        const responseMessage = JSON.parse(body);
+
+        if (err) {
+          logger.error("Error Connecting to Payment Switch: " + err);
+          return res
+            .status(500)
+            .json({ message: 'Error connecting payment switch server'});
+        } else if (response.statusCode === 400) {
+          logger.info('Payment could not be verified : ' + order._id);
+          return res
+          .status(response.statusCode)
+          .json({message: responseMessage.message });
+        } else if (!(/^2/.test('' + response.statusCode))) {
+          logger.info('Payment could not be verified status code ' + response.statusCode + ' for ' + order._id);
+          return res
+          .status(response.statusCode)
+          .json({message: 'Payment Could not be verified'});
+        }
+
+        // console.log(error);
+        // console.log(response.statusCode);
+        // console.log(body);
+
+        logger.info(
+          "Payment Verification Returned StatusCode : " + response.statusCode
+        );
+
+        if (response.statusCode === 200) {
+          if (!order.paymentVerified) {
+            order.paymentVerified = true;
+
+            order
+              .save()
+              .then((savedOrder) => {
+                logger.info('Order Payment Verification Status updated : ' + order._id);
+              })
+              .catch((err) => {
+                logger.error('Internal Error updating order Verification : ' + err);
+                return res
+                .status(500)
+                .json({message: 'Internal Error updating order verification'});
+              });
+          }
+
+          return res.status(response.statusCode).json({
+            message: responseMessage.message,
+          });
+        }
+      });
+    });
+  } else {
+    logger.error("No OrderId submitted");
+    res.status(500).json({
+      message: "No OrderId submitted",
+    });
+  }
+};
+
+exports.renderOrderDetails = (req, res, next) => {
+
+  Order
+  .findOne({_id: req.params.id})
+  .populate('user')
+  .lean()
+  .then(order => {
+    order.totalPrice = numberWithCommas(order.cart.totalPrice);
+    order.cart = new Cart(order.cart).generateArray();
+    // console.log(order);
+    res.render('order/orderdetail', {
+      order: order,
+      csrfToken: req.csrfToken()
+    });
+  })
+  .catch(err => {
+    const msg = 'Error Loading Order : ' + req.params.id + ' from the database ' + err;
+    logger.error(msg);
+    req.flash('error', msg);
+    return res.redirect('/orders/manage');
+  });
+};
+
+function numberWithCommas(x) {
+  x = x.toString();
+  var pattern = /(-?\d+)(\d{3})/;
+  while (pattern.test(x)) x = x.replace(pattern, "$1,$2");
+  return x;
+}

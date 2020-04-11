@@ -1,0 +1,153 @@
+<% include ../partials/header %>
+<link rel="stylesheet" href="/stylesheets/order.css" />
+<link rel="stylesheet" href="/stylesheets/shopping-cart.css" />
+
+<input type="hidden" id="_csrf" value="<%=csrfToken%>" />
+
+<div class="container" style="align-items: center;">
+  <div class="card shopping-cart">
+    <div class="card-header bg-dark text-light">
+      <i class="fad fa-box-full"></i>
+      Manage Order <%= order._id %>
+      <div class="clearfix"></div>
+    </div>
+    <% if (order) { %>
+    <div class="container mt-3">
+      <div class="row">
+        <div class="col-md-6 col-sm-12">
+          <!-- FullName Input -->
+          <div class="form-group input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">
+                <i class="fal fa-user"></i>
+              </span>
+            </div>
+            <input
+              name="fullname"
+              class="form-control"
+              placeholder="Full Name"
+              type="text"
+              value="<%=order.user.fullName%>"
+              disabled
+            />
+          </div>
+
+          <!-- E-mail Input -->
+          <div class="form-group input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">
+                <i class="fal fa-envelope"></i>
+              </span>
+            </div>
+            <input
+              name="email"
+              class="form-control"
+              placeholder="Email address"
+              type="email"
+              value="<%=order.user.email%>"
+              disabled
+            />
+          </div>
+          <!-- Telephone Number -->
+          <div class="form-group input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">
+                <i class="fal fa-phone"></i>
+              </span>
+            </div>
+            <input
+              name="telephone"
+              class="form-control"
+              placeholder="Phone number"
+              value="<%=order.user.telephoneNumber ? order.user.telephoneNumber : ''%>"
+              type="text"
+              disabled
+            />
+          </div>
+
+          <div class="form-group input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"
+                ><i class="fal fa-map-marker-alt"></i
+              ></span>
+            </div>
+
+            <textarea
+              disabled
+              class="form-control"
+              id="txtAddress"
+              name="address"
+              cols="60"
+              rows="10"
+            >
+          <%=order.user.address ? order.user.address : '' %>
+        </textarea
+            >
+          </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <div class="row">
+            <div class="col-12">
+
+              <% if (order.fulfilled) { %>
+              <button class="btn btn-success" onClick="fulfillOrder('<%= order._id %>')"> <i class="fal fa-truck-loading"></i> Delivery</button>
+              <% } else { %>
+              <button class="btn btn-warning" onClick="fulfillOrder('<%= order._id %>')"> <i class="fal fa-truck-loading"></i> Delivery</button>
+              <% } %>
+
+              <% if (order.paymentVerified) { %>
+              <button class="btn btn-success"  onClick="verifyPayment('<%= order._id %>')"><i class="fal fa-sack-dollar"></i> Payment</button>
+              <% } else { %> 
+                <button class="btn btn-warning" onClick="verifyPayment('<%= order._id %>')"><i class="fal fa-sack-dollar"></i> Payment</button>
+              <% } %>
+            </div>
+            <div class="col-12 mt-3">
+              <h4><i class="fal fa-tags"></i> Total Price &#x20A6;<%= order.totalPrice %></h4>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Row -->
+    </div>
+    <!-- Container mt-3 -->
+
+    <hr />
+    <div id="main-row" class="row" style="align-items: center;">
+      <div class="col-md-12 col-md-offset-1">
+        <div class="panel panel-default panel-table">
+          <div class="panel-body">
+            <table class="table table-striped table-bordered table-list">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Unit</th>
+                  <th>Qty</th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% order.cart.forEach(item => { item.bundles.forEach(bundle => {
+                if (bundle.qty > 0) { %>
+                <tr>
+                  <td align="center"><%= item.name %></td>
+                  <td><%= bundle.unit %></td>
+                  <td><%= bundle.qty %></td>
+                  <td>&#x20A6;<%= bundle.subTotalPrice %></td>
+                </tr>
+                <% } }); }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <% } else { %>
+        <div class="container">
+          <h4 class="text-center">Empty Order</h4>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/javascripts/script.js"></script>
+<% include ../partials/footer %>
