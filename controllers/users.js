@@ -80,7 +80,7 @@ exports.postProfile = (req, res, next) => {
     User.updateOne(
       { email: req.user.email },
       {
-        fullname: req.body.fullname,
+        fullName: req.body.fullname,
         telephone: req.body.telephone,
         address: req.body.address,
       }
@@ -334,7 +334,7 @@ exports.postVerification = (req, res, next) => {
 
           var text =
             "Hello " +
-            foundUser.fullname +
+            foundUser.fullName +
             "\n\nPlease activate your account by clicking the link:\nhttps://" +
             req.headers.host +
             "/users/confirmation/" +
