@@ -22,6 +22,7 @@
                 <tr>
                   <th><em class="fa fa-cog"></em></th>
                   <th class="hidden-xs">ID</th>
+                  <th>Date</th>
                   <th>Customer</th>
                   <th>Qty</th>
                   <th>Price</th>
@@ -69,6 +70,9 @@
                     <a href="/orders/orderdetails/<%= order._id%>"
                       ><%= order._id.toString().substring(0,4) + '..' %></a
                     >
+                  </td>
+                  <td>
+                    <%= new Date(order.date).getDay() + '/' + new Date(order.date).getMonth() + '/' + new Date(order.date).getFullYear() %>
                   </td>
                   <td><%= order.user ? order.user.fullName : 'Anonymous' %></td>
                   <td><%= order.cart.totalQty %></td>
