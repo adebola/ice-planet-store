@@ -72,7 +72,18 @@
                     >
                   </td>
                   <td>
-                    <%= new Date(order.date).getDay() + '/' + new Date(order.date).getMonth() + '/' + new Date(order.date).getFullYear() %>
+                    <% let newdate = new Date(order.date) 
+                       let day = newdate.getDate();
+                       let month = newdate.getMonth() + 1
+                       let year = newdate.getFullYear()
+
+                       let strday = day < 10 ? '0' + day : day
+                       let strmonth = month < 10 ? '0' + month : month 
+
+                       let fmtString = strday + '/' + strmonth + '/' + year
+                    %>
+                    <%= fmtString.trim()%>
+              
                   </td>
                   <td><%= order.user ? order.user.fullName : 'Anonymous' %></td>
                   <td><%= order.cart.totalQty %></td>
@@ -143,7 +154,7 @@
   </div>
 </div>
 
-<div
+<!-- <div
   class="modal fade"
   id="displayfulfillModalSuccess"
   tabindex="-1"
@@ -216,9 +227,9 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
-<div
+<!-- <div
   class="modal fade"
   id="displayVerifyModalSuccess"
   tabindex="-1"
@@ -288,7 +299,7 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 <script src="/javascripts/script.js"></script>
 <% include ../partials/footer %>

@@ -145,7 +145,7 @@ exports.manageOrders = (req, res, next) => {
 
   // Load Orders from the Database
 
-  Order.find({$query: {}, $orderby: {date: -1}})
+  Order.find({$query: {}, $orderby: {date: 1}})
     .populate("user")
     .lean()
     .skip(perPage * page - perPage)
