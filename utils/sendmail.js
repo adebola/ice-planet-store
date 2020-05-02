@@ -67,6 +67,7 @@ let sendMail = function(recipient, textBody, subject) {
 
 let  sendMailWithAttachment = function (
   recipient,
+  ccRecipient,
   textBody,
   subject,
   attachmentPath
@@ -91,6 +92,7 @@ let  sendMailWithAttachment = function (
       {
         from: mailFrom,
         to: recipient,
+        cc: ccRecipient,
         subject: subject,
         text: textBody,
         attachments: [

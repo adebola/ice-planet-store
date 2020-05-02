@@ -23,7 +23,7 @@ exports.checkDelivery = (req, res, next) => {
       if (!(req.user.address && req.user.address.length > 5)) {
         return res.status(201).json({
           message:
-            "You dont have a valid address on your profile, please click on your name on the menu and select profile to update your address",
+            "You don't have a valid address on your profile, please click on your name on the menu and select profile to update your address",
         });
       }
 
@@ -257,8 +257,8 @@ exports.verifypayment = (req, res, next) => {
         if (err) {
           logger.error("Error Connecting to Payment Switch: " + err);
           return res
-            .status(500)
-            .json({ message: 'Error connecting payment switch server'});
+            .status(response.statusCode)
+            .json({ message: 'Error Verifying Payment ' + responseMessage.message});
         } else if (response.statusCode === 400) {
           logger.info('Payment could not be verified : ' + order._id);
           return res
@@ -270,10 +270,6 @@ exports.verifypayment = (req, res, next) => {
           .status(response.statusCode)
           .json({message: 'Payment Could not be verified'});
         }
-
-        // console.log(error);
-        // console.log(response.statusCode);
-        // console.log(body);
 
         logger.info(
           "Payment Verification Returned StatusCode : " + response.statusCode

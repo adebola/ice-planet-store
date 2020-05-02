@@ -237,7 +237,8 @@ function payWithPaystack() {
 
     if (xhttpReq.readyState === 4 && xhttpReq.status === 201) {
       var handler = PaystackPop.setup({
-        key: "pk_live_03b4aca139cfec3fc9b816440742819e32d87bc4",
+        key: "pk_test_94dbaebf2467e2b41e3552f23a093e7e55cbe57e",
+        //key: "pk_live_03b4aca139cfec3fc9b816440742819e32d87bc4",
         email: indata.email,
         amount: indata.amount * 100,
         currency: "NGN",
@@ -336,11 +337,13 @@ function verifyPayment(orderId, button) {
     },
     success: function (data) {
       button.className = "btn btn-success";
-      console.log(data);
       showMessage(data.message, "success");
     },
-    failure: function (errMsg) {
-      showMessage(errMsg, "error");
+    failure: function (data) {
+      showMessage(data.message, "error");
+    },
+    error: function (data) {
+      showMessage(data.responseJSON.message, "error");
     },
   });
 }

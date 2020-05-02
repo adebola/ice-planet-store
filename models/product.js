@@ -8,7 +8,8 @@ var ProductSchema = new mongoose.Schema({
   bundles: [
     {
       unit: { type: String, required: true },
-      price: { type: Number, required: true }
+      price: { type: Number, required: true },
+      enabled: {type: Boolean, required: true, default: true}
     }
   ]
 });

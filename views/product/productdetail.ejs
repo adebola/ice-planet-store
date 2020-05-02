@@ -1,0 +1,181 @@
+<% include ../partials/header %>
+<link rel="stylesheet" href="/stylesheets/order.css" />
+<link rel="stylesheet" href="/stylesheets/shopping-cart.css" />
+<link rel="stylesheet" href="/stylesheets/table.css" />
+
+<input type="hidden" id="_csrf" value="<%=csrfToken%>" />
+
+<div class="container" style="align-items: center;">
+  <div class="card shopping-cart">
+    <div class="card-header bg-dark text-light">
+      <i class="fab fa-product-hunt"></i>
+      Manage Product <%= product._id %>
+
+      
+      <div class="clearfix"></div>
+    </div>
+
+    <form action="/products/productdetails/update?_csrf=<%=csrfToken%>" method="POST" enctype="multipart/form-data">
+      <input type="hidden" id="_id" name="productid" value="<%=product._id%>" />
+      <div class="container mt-3">
+        <div class="row">
+          <div class="col-md-6 col-sm-12">
+            <!-- Product Name -->
+            <div class="form-group input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">
+                  <i class="fal fa-signature"></i>
+                </span>
+              </div>
+              <input
+                name="name"
+                class="form-control"
+                placeholder="Product Name"
+                type="text"
+                value="<%= product.name %>"
+              />
+            </div>
+
+            <!-- Product Category -->
+            <div class="form-group input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">
+                  <i class="fad fa-compress-arrows-alt"></i>
+                </span>
+              </div>
+              <input
+                name="category"
+                class="form-control"
+                placeholder="Product Category"
+                type="text"
+                value="<%=product.category %>"
+              />
+            </div>
+
+            <div class="form-group input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"
+                  ><i class="fal fa-file-signature"></i
+                ></span>
+              </div>
+
+              <textarea
+                class="form-control"
+                id="txtAddress"
+                placeholder="Product Description"
+                name="description"
+                cols="60"
+                rows="10"
+              >
+              <%= product.description %>
+              </textarea
+              >
+            </div>
+          </div>
+          <div class="col-md-6 col-sm-12">
+            <div class="row">
+              <div class="col-12">
+                <input
+                  type="file"
+                  name="image"
+                  id="file-selector"
+                  class="btn btn-warning"
+                />
+                <!-- <label for="file-1"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"/></svg> <span>Choose Image&hellip;</span></label> -->
+
+                <!-- <button class="btn btn-warning" onClick=""> <i class="fal fa-truck-loading" disabled></i> Save Image</button> -->
+              </div>
+              <div class="col-12 mt-3">
+                <img
+                  src="<%=product.imagePath%>"
+                  class="img-responsive"
+                  id="prod-image"
+                  style="max-width: 100%; max-height: 100%;"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <input type="submit" class="btn btn-warning"/>
+        <!-- Row -->
+      </div>
+      <!-- Container mt-3 -->
+    </form>
+
+    <hr />
+    <div class="row" style="width: 100%;">
+      
+      <div class="col-12" style="display: flex; justify-content: flex-end;">
+        <button
+          id="addNewRow"
+          class="btn btn-warning btn-sm"
+          style="margin: 5px;"
+          onclick="onAddNewBundle()"
+        >
+          Add New Bundle
+        </button>
+      </div>
+    </div>
+
+    <div id="main-row" class="row" style="align-items: center;">
+      <div class="col-md-12 col-md-offset-1">
+        <table
+          class="table table-bordered table-striped table-hover table-condensed text-center"
+          id="DyanmicTable"
+        >
+          <thead>
+            <tr>
+              <th style="width: 45%;" class="text-center">
+                Unit
+              </th>
+              <th style="width: 30%;" class="text-center">
+                Price
+              </th>
+              <th style="width: 25%;" class="text-center">
+                Action
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <% product.bundles.forEach(bundle => { %>
+            <tr>
+              <td data-type="unit" data-value="<%=bundle._id%>">
+                <%= bundle.unit %>
+              </td>
+              <td data-type="price" data-value="<%=bundle._id%>">
+                <%= bundle.price %>
+              </td>
+              <td class="noedit">
+                <% let enabled; if (typeof bundle.enabled === 'undefined') {
+                enabled = true } else { enabled = bundle.enabled } if (enabled)
+                { %>
+                <button
+                  class="btn-xs btn-danger"
+                  data-value="true"
+                  onclick="toggleBundle('<%= bundle._id%>', this)"
+                >
+                  <i class="fas fa-times"></i> Suspend
+                </button>
+                <% } else {%>
+                <button
+                  class="btn-xs btn-success"
+                  data-value="false"
+                  onclick="toggleBundle('<%= bundle._id %>', this)"
+                >
+                  <i class="fas fa-check"></i> Restore
+                </button>
+                <% } %>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/javascripts/script.js"></script>
+<script src="/javascripts/mime-type.validator.js"></script>
+<script src="/javascripts/tablecelledit.js"></script>
+<% include ../partials/footer %>

@@ -26,6 +26,7 @@ module.exports = function Receipt(orderId) {
 
         mail.sendMailWithAttachment(
           order.user.email,
+          process.env.EMAILADDRESS,
           "Please find attached with thanks your receipt for your recent order",
           "Your Order from IcePlanet - " + formatDate(Date.now()),
           this.path

@@ -12,7 +12,7 @@ router.post("/check-delivery", OrderController.checkDelivery);
 router.get('/manage/:page', isAdminGET, OrderController.manageOrders);
 router.post('/fulfill', isAdminPOST, OrderController.fulfill);
 router.post('/verifypayment', isAdminPOST, OrderController.verifypayment);
-router.get('/orderdetails/:id', isAdminPOST, OrderController.renderOrderDetails);
+router.get('/orderdetails/:id', isAdminGET, OrderController.renderOrderDetails);
 
 function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {

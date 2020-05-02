@@ -1,0 +1,23 @@
+table > tbody > tr > td {
+  outline: 0;
+  position: relative; }
+  table > tbody > tr > td .button-toolbar {
+    display: none;
+    border-top: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    left: -2px;
+    width: calc(100% + 4px);
+    z-index: 2;
+    text-align: center; }
+    table > tbody > tr > td .button-toolbar .button-wrapper {
+      padding: 8px;
+      background-color: #fff;
+      border: 2px solid dimgray;
+      border-top: none; }
+  table > tbody > tr > td.in-edit-mode {
+    border: 2px solid dimgray; }
+    table > tbody > tr > td.in-edit-mode .button-toolbar {
+      display: flex;
+      justify-content: center; }

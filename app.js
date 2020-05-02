@@ -15,11 +15,12 @@ const indexRouter = require("./routes/index");
 const userRouter = require("./routes/users");
 const productRouter = require('./routes/products');
 const orderRouter = require('./routes/orders');
+const contactRouter = require('./routes/contacts');
 const logger = require('./config/winston');
 
 const app = express();
 
-//const seed = require('./seed');
+//const enableBundles = require('./seed');
 
 mongoose.connect(
   process.env.DATABASEURL,
@@ -33,7 +34,7 @@ mongoose.connect(
     logger.error("MongoDB Connection Failed: " + err.message);
   });
 
-  //seed();
+  //enableBundles();
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -72,6 +73,8 @@ app.use("/", indexRouter);
 app.use("/users", userRouter);
 app.use("/products", productRouter);
 app.use("/orders", orderRouter);
+app.use("/contacts", contactRouter);
+
 app.use('*', (req, res, next) => {
   res.render('404');
 });

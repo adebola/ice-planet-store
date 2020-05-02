@@ -1,0 +1,95 @@
+<% include ../partials/header %>
+<link rel="stylesheet" href="/stylesheets/contact.css" />
+
+<div class="contact3 py-5">
+  <div class="row no-gutters">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="card-shadow">
+            <img src="/images/custrep.jpg" class="img-fluid">
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="contact-box ml-3">
+            <h1 class="font-weight-light mt-2">Quick Contact</h1>
+            <form class="mt-4" action="/contacts/info" method="POST">
+              <input type="hidden"  id="_csrf" name="_csrf" value="<%=csrfToken%>" />
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="form-group mt-2">
+                    <input class="form-control" type="text" placeholder="name" name="name" required>
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <div class="form-group mt-2">
+                    <input class="form-control" type="email" placeholder="email address" name="email" required>
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <div class="form-group mt-2">
+                    <input class="form-control" type="text" placeholder="telephone" name="phone" required>
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <div class="form-group mt-2">
+                    <textarea class="form-control" rows="3" placeholder="message" name="message" required></textarea>
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <button type="submit" class="btn btn-warning mt-3 text-white border-0 px-3 py-2"><span> SUBMIT</span></button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="col-lg-12">
+          <div class="card mt-4 border-0 mb-4">
+            <div class="row">
+              <div class="col-lg-4">
+                <div class="card-body d-flex align-items-center c-detail pl-0">
+                  <div class="mr-3 align-self-center">
+                    <img src="/images/icon1.png">
+                  </div>
+                  <div class="">
+                    <h6 class="font-weight-medium">Address</h6>
+                    <p class="">Old Baale's Palace.
+                      <br> 16 Ajinran way, Agungi</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="card-body d-flex align-items-center c-detail pl-0">
+                  <div class="mr-3 align-self-center">
+                    <img src="/images/icon2.png">
+                  </div>
+                  <div class="">
+                    <h6 class="font-weight-medium">Phone</h6>
+                    <p class="">08188111333
+                      <br>08075210001</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="card-body d-flex align-items-center c-detail pl-0">
+                  <div class="mr-3 align-self-center">
+                    <img src="/images/icon3.png">
+                  </div>
+                  <div class="">
+                    <h6 class="font-weight-medium">Email</h6>
+                    <p class="">
+                      info@iceplanet.store
+                      <br> iceplanetstores@gmail.com
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% include ../partials/footer %>

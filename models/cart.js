@@ -32,13 +32,15 @@ module.exports = function Cart(oldCart) {
           bundle.subTotalPrice = 0;
         }
       });
+
+      console.log('AAAAAAAAAAAAAAAAAAA ' + this.totalQty)
     } else {
       logger.info("Cart Object StoredItem Found");
 
       storedItem.bundles.forEach((bundle) => {
           
-          console.log(bundle._id);
-          console.log(bundleId);
+          //console.log(bundle._id);
+          //console.log(bundleId);
 
         if (bundle._id == bundleId) {
 
@@ -52,10 +54,14 @@ module.exports = function Cart(oldCart) {
           logger.info("Cart Object Inside Bundle.Equals Item Found")
         }
       });
+
+      console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB ' + this.totalQty)
     }
 
     this.totalQty += addQty;
     this.totalPrice += addPrice;
+
+    console.log('CCCCCCCCCCCCCCCCCCCCCCCCCCC ' + this.totalQty)
   };
 
   this.addByOne = function(id) {
@@ -63,6 +69,8 @@ module.exports = function Cart(oldCart) {
     this.items[id].price += this.items[id].item.price;
     this.totalQty++;
     this.totalPrice += this.items[id].item.price;
+
+    console.log('XXXXXXXXXXXXXXXXXXXXXX ' + this.totalQty);
   };
 
   this.reduceByOne = function(id) {
@@ -74,6 +82,8 @@ module.exports = function Cart(oldCart) {
     if (this.items[id].qty <= 0) {
       delete this.items[id];
     }
+
+    console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ ' + this.totalQty);
   };
 
   this.removeItem = function(id) {

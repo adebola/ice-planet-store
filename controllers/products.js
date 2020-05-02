@@ -1,9 +1,21 @@
-const Product = require("../models/product");
-const Cart = require("../models/cart");
+const fs = require('fs');
+const AWS = require('aws-sdk');
+const Product = require('../models/product');
+const Cart = require('../models/cart');
 const logger = require("../config/winston");
 
 exports.getAllProducts = (req, res, next) => {
-  Product.find({}, (err, products) => {
+
+  Product.aggregate([{
+      $project: { _id: 1, imagePath: 1, name: 1, description: 1, category: 1,
+        bundles: { $filter: { 
+          input: "$bundles", as: "bundle", cond: {
+            $eq: ["$$bundle.enabled", true]
+          } 
+        }
+      }
+    }
+  }], (err, products) => {
     if (err) {
       var message =
         "Error Loading Products from Database, please try refreshing the page : " +
@@ -11,7 +23,7 @@ exports.getAllProducts = (req, res, next) => {
       logger.error(message);
       res.render("error/error", {
         message: message,
-        csrfToken: req.csrfToken()
+        csrfToken: req.csrfToken(),
       });
     } else {
       var errMessage = req.query.errMessage;
@@ -19,10 +31,31 @@ exports.getAllProducts = (req, res, next) => {
       res.render("shop/index", {
         products: products,
         csrfToken: req.csrfToken(),
-        errMessage: errMessage ? errMessage : null
+        errMessage: errMessage ? errMessage : null,
       });
     }
   });
+
+  // Product.find({}, (err, products) => {
+  //   if (err) {
+  //     var message =
+  //       "Error Loading Products from Database, please try refreshing the page : " +
+  //       err.message;
+  //     logger.error(message);
+  //     res.render("error/error", {
+  //       message: message,
+  //       csrfToken: req.csrfToken(),
+  //     });
+  //   } else {
+  //     var errMessage = req.query.errMessage;
+
+  //     res.render("shop/index", {
+  //       products: products,
+  //       csrfToken: req.csrfToken(),
+  //       errMessage: errMessage ? errMessage : null,
+  //     });
+  //   }
+  // });
 };
 
 exports.getProductBundles = (req, res, next) => {
@@ -35,14 +68,14 @@ exports.getProductBundles = (req, res, next) => {
   }
 
   Product.findById(productId)
-    .then(foundProduct => {
+    .then((foundProduct) => {
       if (foundProduct) {
         for (var i = 0; i < foundProduct.bundles.length; i++) {
           if (foundProduct.bundles[i]._id.equals(bundleId)) {
             return res.status(201).json({
               message: "success",
               unit: foundProduct.bundles[i].unit,
-              price: foundProduct.bundles[i].price
+              price: foundProduct.bundles[i].price,
             });
           }
         }
@@ -63,7 +96,7 @@ exports.getProductBundles = (req, res, next) => {
         res.status(404).json({ message: "Product Not Found in Database" });
       }
     })
-    .catch(err => {
+    .catch((err) => {
       logger.error("router.post(/bundle) => Exception in Product.findById()");
       logger.error(err.message);
       res.status(500).json({ message: "Internal Error: " + err.message });
@@ -79,7 +112,7 @@ exports.addProductToCart = (req, res, next) => {
   Product.findById(productId)
     .lean()
     .then((foundProduct) => {
-      foundProduct.bundles.forEach(bundle => {
+      foundProduct.bundles.forEach((bundle) => {
         if (bundle.unit == req.body.type) {
           bundleId = bundle._id;
         }
@@ -92,16 +125,24 @@ exports.addProductToCart = (req, res, next) => {
         try {
           req.session.save();
         } catch (err) {
-          var errMessage = "router.post(/add-to-cart/:id) => Error Saving Session : " + err.message
+          var errMessage =
+            "router.post(/add-to-cart/:id) => Error Saving Session : " +
+            err.message;
           logger.error(errMessage);
         }
       } else {
-        errMessage = "addProductToCart: Unable to Locate Bundle of Type: " + req.body.type + " in Product:" + productId;
+        errMessage =
+          "addProductToCart: Unable to Locate Bundle of Type: " +
+          req.body.type +
+          " in Product:" +
+          productId;
         logger.error(errMessage);
       }
     })
     .catch((err) => {
-      errMessage = "router.post(/add-to-cart/:id) => Exception in Product.findById() for Product: " + productId;
+      errMessage =
+        "router.post(/add-to-cart/:id) => Exception in Product.findById() for Product: " +
+        productId;
       logger.error(errMessage);
       logger.error(err.message);
     });
@@ -122,7 +163,7 @@ exports.adjustProductInCart = (req, res, next) => {
   var item = cart.items[productId];
 
   if (item) {
-    item.bundles.forEach(bundle => {
+    item.bundles.forEach((bundle) => {
       if (bundle._id == bundleId) {
         var adjustPrice = (qty - bundle.qty) * bundle.price;
 
@@ -134,7 +175,7 @@ exports.adjustProductInCart = (req, res, next) => {
 
     req.session.save();
     return res.status(201).json({
-      message: "success"
+      message: "success",
     });
   } else {
     logger.error(
@@ -157,7 +198,7 @@ exports.deleteProductFromCart = (req, res, next) => {
   var removeProduct = true;
 
   if (item) {
-    item.bundles.forEach(bundle => {
+    item.bundles.forEach((bundle) => {
       if (bundle._id == bundleId) {
         cart.totalPrice -= bundle.subTotalPrice;
         cart.totalQty -= bundle.qty;
@@ -184,7 +225,7 @@ exports.getShoppingCart = (req, res, next) => {
   if (!req.session.cart) {
     return res.render("shop/shopping-cart", {
       products: null,
-      csrfToken: req.csrfToken()
+      csrfToken: req.csrfToken(),
     });
   }
 
@@ -194,9 +235,257 @@ exports.getShoppingCart = (req, res, next) => {
     products: cart.generateArray(),
     totalPrice: numberWithCommas(cart.totalPrice),
     delivery: 0,
-    csrfToken: req.csrfToken()
+    csrfToken: req.csrfToken(),
   });
 };
+
+exports.manageProducts = (req, res, next) => {
+  const perPage = 10;
+  const page = req.params.page || 1;
+
+  Product.find({})
+    .lean()
+    .skip(perPage * page - perPage)
+    .limit(perPage)
+    .then((products) => {
+      Product.count().exec((err, count) => {
+        if (err) {
+          logger.error("Error Counting Products in Database : " + err);
+          req.flash(
+            "Technical Error in Produc::Count, Please Contact IcePlanet Support " +
+              err
+          );
+          return res.redirect("/products/manage");
+        }
+
+        return res.render("product/productlist", {
+          products: products,
+          current: page,
+          pages: Math.ceil(count / perPage),
+          csrfToken: req.csrfToken(),
+        });
+      });
+    });
+};
+
+exports.renderProductDetails = (req, res, next) => {
+  Product.findOne({ _id: req.params.id })
+    .lean()
+    .then((product) => {
+      res.render("product/productdetail", {
+        product: product,
+        csrfToken: req.csrfToken(),
+      });
+    });
+};
+
+exports.updateImage = (req, res, next) => {
+  if (req.file) {
+    const imagePath =
+      req.protocol + "://" + req.get("host") + "/images/" + req.file.filename;
+
+    Product.findOneAndUpdate({ _id: req.params.id }, { imagePath: imagePath })
+      .then((result) => {
+        return res.redirect("/products/productdetails/" + req.params.id);
+      })
+      .catch((err) => {
+        req.flash(
+          "error",
+          "Error Uploading Image please ensure it is the correct format"
+        );
+        return res.redirect("/products/productdetails/" + req.params.id);
+      });
+  } else {
+    req.flash("error", "Error No File to upload");
+    return res.redirect("/products/productdetails/" + req.params.id);
+  }
+};
+
+exports.addBundle = (req, res, next) => {
+  Product.update(
+    { _id: req.body._id },
+    {
+      $push: {
+        bundles: {
+          unit: req.body.bundle.unit,
+          price: req.body.bundle.price,
+          enabled: true,
+        },
+      },
+    }
+  )
+    .then((bundle) => {
+      // Find the last Inserted Bundle
+      Product.findOne({ _id: req.body._id }, { bundles: { $slice: -1 } })
+        .then((product) => {
+          logger.info(product);
+          return res.status(200).json({
+            message: "success",
+            bundleId: product.bundles[0]._id,
+          });
+        })
+        .catch((err) => {
+          logger.error(err);
+          return res.status(400).json({
+            message: err.message,
+          });
+        });
+    })
+    .catch((err) => {
+      logger.error(err);
+      return res.status(400).json({
+        message: err.message,
+      });
+    });
+};
+
+exports.suspendBundle = (req, res, next) => {
+  Product.update(
+    { _id: req.body.productId, "bundles._id": req.body.bundleId },
+    { $set: { "bundles.$.enabled": false } }
+  )
+    .then((val) => {
+      logger.info(val);
+      return res.status(200).json({
+        message: "success",
+      });
+    })
+    .catch((err) => {
+      logger.error(err);
+      return res.status(400).json({
+        message: err.message,
+      });
+    });
+};
+
+exports.restoreBundle = (req, res, next) => {
+  Product.update(
+    { _id: req.body.productId, "bundles._id": req.body.bundleId },
+    { $set: { "bundles.$.enabled": true } }
+  )
+    .then((val) => {
+      logger.info(val);
+      return res.status(200).json({
+        message: "success",
+      });
+    })
+    .catch((err) => {
+      logger.error(err);
+      return res.status(400).json({
+        message: err.message,
+      });
+    });
+};
+
+exports.updateUnit = (req, res, next) => {
+  Product.update(
+    { _id: req.body._id, "bundles._id": req.body.bundleId },
+    { $set: { "bundles.$.unit": req.body.value } }
+  )
+    .then((val) => {
+      logger.info(val);
+      return res.status(200).json({
+        message: "success",
+      });
+    })
+    .catch((err) => {
+      logger.error(err);
+      return res.status(400).json({
+        message: err.message,
+      });
+    });
+};
+
+exports.updatePrice = (req, res, next) => {
+  Product.update(
+    { _id: req.body._id, "bundles._id": req.body.bundleId },
+    { $set: { "bundles.$.price": req.body.value } }
+  )
+    .then((val) => {
+      logger.info(val);
+      return res.status(200).json({
+        message: "success",
+      });
+    })
+    .catch((err) => {
+     logger.error(err);
+      return res.status(400).json({
+        message: err.message,
+      });
+    });
+};
+
+exports.updateProduct = (req, res, next) => {
+
+  const id = req.body.productid;
+
+  if (req.file) {
+
+    AWS.config.setPromisesDependency();
+
+    AWS.config.update({
+      accessKeyId: process.env.ACCESSKEYID,
+      secretAccessKey: process.env.SECRETACCESSKEY,
+      region: "eu-west-2"
+    });
+
+    const s3 = new AWS.S3();
+
+    const params = {
+      ACL: 'public-read',
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Body: fs.createReadStream(req.file.path),
+      Key: `prodimages/${req.file.filename}`
+    }
+
+    s3.upload(params, (err, data) => {
+      if (err) {
+        req.flash('S3 Upload Error, please contact IcePlanet', 'error');
+        logger.error('S3 Upload Error');
+        logger.error(err);
+        return res.redirect('/products/productdetails/' + req.body.productid);
+      }
+
+      if (data) {
+        fs.unlinkSync(req.file.path);
+        const locationUrl = data.Location;
+
+        logger.info(data);
+
+        Product.update({_id: id}, {$set: {
+          name: req.body.name,
+          category: req.body.category,
+          description: req.body.description,
+          imagePath: locationUrl
+        }})
+        .then(result => {
+          logger.info(result);
+          req.flash('Product updated Successfully', 'success');
+        })
+        .catch(err => {
+          logger.error(err);
+          req.flash('Error updating Product', 'error');
+        })
+      }
+    });
+  } else {
+    Product.update({_id: id}, {$set: {
+      name: req.body.name,
+      category: req.body.category,
+      description: req.body.description,
+    }})
+    .then(result => {
+      logger.info(result);
+      req.flash('Product updated Successfully', 'success');
+    })
+    .catch(err => {
+      logger.error(err);
+      req.flash('Error updating Product', 'error');
+    });
+  }
+
+  return res.redirect('/products/productdetails/' + req.body.productid);
+}
 
 function numberWithCommas(x) {
   x = x.toString();

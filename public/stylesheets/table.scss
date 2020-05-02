@@ -1,0 +1,35 @@
+table {
+  >tbody {
+    >tr {
+      >td {
+        outline: 0;
+        position: relative;
+        .button-toolbar {
+          display: none;
+          border-top: none;
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          left: -2px;
+          width: calc(100% + 4px);
+          z-index: 2;
+          text-align: center;
+          .button-wrapper {
+            padding: 8px;
+            background-color: #fff;
+            border: 2px solid rgb(105, 105, 105);
+            border-top: none;
+          }
+        }
+
+        &.in-edit-mode {
+          border: 2px solid rgb(105, 105, 105);
+          .button-toolbar {
+            display: flex;
+            justify-content: center;
+          }
+        }
+      }
+    }
+  }
+}
