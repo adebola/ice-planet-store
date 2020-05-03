@@ -9,7 +9,7 @@
   <div class="card shopping-cart">
     <div class="card-header bg-dark text-light">
       <i class="fab fa-product-hunt"></i>
-      Manage Product <%= product.name %>
+      <%= product.name %>
       <div class="clearfix"></div>
     </div>
 
@@ -63,17 +63,14 @@
                 placeholder="Product Description"
                 name="description"
                 cols="60"
-                rows="10"
-              >
-              <%= product.description %>
-              </textarea
-              >
+                rows="10"><%= product.description %></textarea>
             </div>
           </div>
           <div class="col-md-6 col-sm-12">
             <div class="row">
               <div class="col-12">
                 <input
+                  style="max-width: 100%;"
                   type="file"
                   name="image"
                   id="file-selector"
@@ -94,7 +91,7 @@
             </div>
           </div>
         </div>
-        <input type="submit" class="btn btn-warning"/>
+        <input type="submit" class="btn btn-warning mt-1"/>
         <!-- Row -->
       </div>
       <!-- Container mt-3 -->
@@ -126,10 +123,10 @@
               <th style="width: 45%;" class="text-center">
                 Unit
               </th>
-              <th style="width: 30%;" class="text-center">
+              <th style="width: 25%;" class="text-center">
                 Price
               </th>
-              <th style="width: 25%;" class="text-center">
+              <th style="width: 30%;" class="text-center">
                 Action
               </th>
             </tr>

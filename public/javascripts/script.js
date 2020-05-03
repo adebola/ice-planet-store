@@ -87,7 +87,7 @@ function changePrice(selectObject) {
   xhttpReq.onload = () => {
     var data = xhttpReq.response;
 
-    if (xhttpReq.readyState === 4 && xhttpReq.status === 201) {
+    if (xhttpReq.readyState === 4 && (xhttpReq.status === 201 || xhttpReq.status === 200)) {
       document.getElementById(
         option.dataset.product
       ).innerText = numberWithCommas(data.price);
@@ -142,7 +142,7 @@ function clickplus(tBox, productId, bundleId) {
   xhttpReq.onload = () => {
     var data = xhttpReq.response;
 
-    if (!(xhttpReq.readyState === 4 && xhttpReq.status === 201)) {
+    if (!(xhttpReq.readyState === 4 && (xhttpReq.status === 201 || xhttpReq.status === 200))) {
       return showMessage("Error Amending Shopping Cart", "error");
     }
 
@@ -235,7 +235,7 @@ function payWithPaystack() {
   xhttpReq.onload = () => {
     var indata = xhttpReq.response;
 
-    if (xhttpReq.readyState === 4 && xhttpReq.status === 201) {
+    if (xhttpReq.readyState === 4 && (xhttpReq.status === 201 || xhttpReq.status === 200)) {
       var handler = PaystackPop.setup({
         //key: "pk_test_94dbaebf2467e2b41e3552f23a093e7e55cbe57e",
         key: "pk_live_03b4aca139cfec3fc9b816440742819e32d87bc4",
@@ -263,7 +263,7 @@ function payWithPaystack() {
           });
 
           xhttpReq2.onload = () => {
-            if (xhttpReq2.readyState === 4 && xhttpReq2.status === 201) {
+            if (xhttpReq2.readyState === 4 && (xhttpReq2.status === 201 || xhttpReq2.status === 200)) {
               window.location.href = "/products/shopping-cart";
             } else {
               showMessage(xhttpReq2.response, "error");
