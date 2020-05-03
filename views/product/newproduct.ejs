@@ -9,12 +9,11 @@
   <div class="card shopping-cart">
     <div class="card-header bg-dark text-light">
       <i class="fab fa-product-hunt"></i>
-      <%= product.name %>
+      New Product
       <div class="clearfix"></div>
     </div>
 
-    <form action="/products/productdetails/update?_csrf=<%=csrfToken%>" method="POST" enctype="multipart/form-data">
-      <input type="hidden" id="_id" name="productid" value="<%=product._id%>" />
+    <form action="/products/productdetails/product/new?_csrf=<%=csrfToken%>" method="POST" enctype="multipart/form-data">
       <div class="container mt-3">
         <div class="row">
           <div class="col-md-6 col-sm-12">
@@ -30,7 +29,7 @@
                 class="form-control"
                 placeholder="Product Name"
                 type="text"
-                value="<%= product.name %>"
+                required
               />
             </div>
 
@@ -46,7 +45,7 @@
                 class="form-control"
                 placeholder="Product Category"
                 type="text"
-                value="<%=product.category %>"
+                required
               />
             </div>
 
@@ -63,7 +62,9 @@
                 placeholder="Product Description"
                 name="description"
                 cols="60"
-                rows="10"><%= product.description %></textarea>
+                rows="10"
+                required
+                ></textarea>
             </div>
           </div>
           <div class="col-md-6 col-sm-12">
@@ -82,7 +83,8 @@
               </div>
               <div class="col-12 mt-3">
                 <img
-                  src="<%=product.imagePath%>"
+                  src=""
+                  alt="Please upload Product Image"
                   class="img-responsive"
                   id="prod-image"
                   style="max-width: 100%; max-height: 100%;"
@@ -91,86 +93,14 @@
             </div>
           </div>
         </div>
-        <input type="submit" class="btn btn-warning mt-1"/>
+        <input type="submit" class="btn btn-warning mb-1" value="Save Contents"/>
         <!-- Row -->
       </div>
       <!-- Container mt-3 -->
     </form>
-
-    <hr />
-    <div class="row" style="width: 100%;">
-      
-      <div class="col-12" style="display: flex; justify-content: flex-end;">
-        <button
-          id="addNewRow"
-          class="btn btn-warning btn-sm"
-          style="margin: 5px;"
-          onclick="onAddNewBundle()"
-        >
-          Add New Bundle
-        </button>
-      </div>
-    </div>
-
-    <div id="main-row" class="row" style="align-items: center;">
-      <div class="col-md-12 col-md-offset-1">
-        <table
-          class="table table-bordered table-striped table-hover table-condensed text-center"
-          id="DyanmicTable"
-        >
-          <thead>
-            <tr>
-              <th style="width: 45%;" class="text-center">
-                Unit
-              </th>
-              <th style="width: 23%;" class="text-center">
-                Price
-              </th>
-              <th style="width: 32%;" class="text-center">
-                Action
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <% product.bundles.forEach(bundle => { %>
-            <tr>
-              <td data-type="unit" data-value="<%=bundle._id%>">
-                <%= bundle.unit %>
-              </td>
-              <td data-type="price" data-value="<%=bundle._id%>">
-                <%= bundle.price %>
-              </td>
-              <td class="noedit">
-                <% let enabled; if (typeof bundle.enabled === 'undefined') {
-                enabled = true } else { enabled = bundle.enabled } if (enabled)
-                { %>
-                <button
-                  class="btn-xs btn-danger"
-                  data-value="true"
-                  onclick="toggleBundle('<%= bundle._id%>', this)"
-                >
-                  <i class="fas fa-times"></i> Suspend
-                </button>
-                <% } else {%>
-                <button
-                  class="btn-xs btn-success"
-                  data-value="false"
-                  onclick="toggleBundle('<%= bundle._id %>', this)"
-                >
-                  <i class="fas fa-check"></i> Restore
-                </button>
-                <% } %>
-              </td>
-            </tr>
-            <% }); %>
-          </tbody>
-        </table>
-      </div>
-    </div>
   </div>
 </div>
 
 <script src="/javascripts/script.js"></script>
 <script src="/javascripts/mime-type.validator.js"></script>
-<script src="/javascripts/tablecelledit.js"></script>
 <% include ../partials/footer %>

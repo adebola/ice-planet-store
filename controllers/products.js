@@ -1,40 +1,52 @@
-const fs = require('fs');
-const AWS = require('aws-sdk');
-const Product = require('../models/product');
-const Cart = require('../models/cart');
+const fs = require("fs");
+const AWS = require("aws-sdk");
+const Product = require("../models/product");
+const Cart = require("../models/cart");
 const logger = require("../config/winston");
 
 exports.getAllProducts = (req, res, next) => {
+  Product.aggregate(
+    [
+      {
+        $project: {
+          _id: 1,
+          imagePath: 1,
+          name: 1,
+          description: 1,
+          category: 1,
+          bundles: {
+            $filter: {
+              input: "$bundles",
+              as: "bundle",
+              cond: {
+                $eq: ["$$bundle.enabled", true],
+              },
+            },
+          },
+        },
+      },
+    ],
+    (err, products) => {
+      if (err) {
+        var message =
+          "Error Loading Products from Database, please try refreshing the page : " +
+          err.message;
+        logger.error(message);
+        res.render("error/error", {
+          message: message,
+          csrfToken: req.csrfToken(),
+        });
+      } else {
+        var errMessage = req.query.errMessage;
 
-  Product.aggregate([{
-      $project: { _id: 1, imagePath: 1, name: 1, description: 1, category: 1,
-        bundles: { $filter: { 
-          input: "$bundles", as: "bundle", cond: {
-            $eq: ["$$bundle.enabled", true]
-          } 
-        }
+        res.render("shop/index", {
+          products: products,
+          csrfToken: req.csrfToken(),
+          errMessage: errMessage ? errMessage : null,
+        });
       }
     }
-  }], (err, products) => {
-    if (err) {
-      var message =
-        "Error Loading Products from Database, please try refreshing the page : " +
-        err.message;
-      logger.error(message);
-      res.render("error/error", {
-        message: message,
-        csrfToken: req.csrfToken(),
-      });
-    } else {
-      var errMessage = req.query.errMessage;
-
-      res.render("shop/index", {
-        products: products,
-        csrfToken: req.csrfToken(),
-        errMessage: errMessage ? errMessage : null,
-      });
-    }
-  });
+  );
 
   // Product.find({}, (err, products) => {
   //   if (err) {
@@ -408,7 +420,7 @@ exports.updatePrice = (req, res, next) => {
       });
     })
     .catch((err) => {
-     logger.error(err);
+      logger.error(err);
       return res.status(400).json({
         message: err.message,
       });
@@ -416,34 +428,32 @@ exports.updatePrice = (req, res, next) => {
 };
 
 exports.updateProduct = (req, res, next) => {
-
   const id = req.body.productid;
 
   if (req.file) {
-
     AWS.config.setPromisesDependency();
 
     AWS.config.update({
       accessKeyId: process.env.ACCESSKEYID,
       secretAccessKey: process.env.SECRETACCESSKEY,
-      region: "eu-west-2"
+      region: "eu-west-2",
     });
 
     const s3 = new AWS.S3();
 
     const params = {
-      ACL: 'public-read',
+      ACL: "public-read",
       Bucket: process.env.AWS_BUCKET_NAME,
       Body: fs.createReadStream(req.file.path),
-      Key: `prodimages/${req.file.filename}`
-    }
+      Key: `prodimages/${req.file.filename}`,
+    };
 
     s3.upload(params, (err, data) => {
       if (err) {
-        req.flash('S3 Upload Error, please contact IcePlanet', 'error');
-        logger.error('S3 Upload Error');
+        req.flash("S3 Upload Error, please contact IcePlanet", "error");
+        logger.error("S3 Upload Error");
         logger.error(err);
-        return res.redirect('/products/productdetails/' + req.body.productid);
+        return res.redirect("/products/productdetails/" + req.body.productid);
       }
 
       if (data) {
@@ -452,40 +462,133 @@ exports.updateProduct = (req, res, next) => {
 
         logger.info(data);
 
-        Product.update({_id: id}, {$set: {
-          name: req.body.name,
-          category: req.body.category,
-          description: req.body.description,
-          imagePath: locationUrl
-        }})
-        .then(result => {
-          logger.info(result);
-          req.flash('Product updated Successfully', 'success');
-        })
-        .catch(err => {
-          logger.error(err);
-          req.flash('Error updating Product', 'error');
-        })
+        Product.update(
+          { _id: id },
+          {
+            $set: {
+              name: req.body.name,
+              category: req.body.category,
+              description: req.body.description,
+              imagePath: locationUrl,
+            },
+          }
+        )
+          .then((result) => {
+            logger.info(result);
+            req.flash("Product updated Successfully", "success");
+          })
+          .catch((err) => {
+            logger.error(err);
+            req.flash("Error updating Product", "error");
+          });
       }
     });
   } else {
-    Product.update({_id: id}, {$set: {
-      name: req.body.name,
-      category: req.body.category,
-      description: req.body.description,
-    }})
-    .then(result => {
-      logger.info(result);
-      req.flash('Product updated Successfully', 'success');
-    })
-    .catch(err => {
-      logger.error(err);
-      req.flash('Error updating Product', 'error');
-    });
+    Product.update(
+      { _id: id },
+      {
+        $set: {
+          name: req.body.name,
+          category: req.body.category,
+          description: req.body.description,
+        },
+      }
+    )
+      .then((result) => {
+        logger.info(result);
+        req.flash("Product updated Successfully", "success");
+      })
+      .catch((err) => {
+        logger.error(err);
+        req.flash("Error updating Product", "error");
+      });
   }
 
-  return res.redirect('/products/productdetails/' + req.body.productid);
-}
+  return res.redirect("/products/productdetails/" + req.body.productid);
+};
+
+exports.renderNewProduct = (req, res, next) => {
+  res.render("product/newproduct", {
+    csrfToken: req.csrfToken(),
+  });
+};
+
+exports.newProduct = (req, res, next) => {
+
+  const product = new Product();
+  product.name = req.body.name;
+  product.category = req.body.category;
+  product.description = req.body.description;
+  product.imagePath = "/images/titus.jpg";
+
+  if (req.file) {
+    AWS.config.setPromisesDependency();
+
+    AWS.config.update({
+      accessKeyId: process.env.ACCESSKEYID,
+      secretAccessKey: process.env.SECRETACCESSKEY,
+      region: "eu-west-2",
+    });
+
+    const s3 = new AWS.S3();
+
+    const params = {
+      ACL: "public-read",
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Body: fs.createReadStream(req.file.path),
+      Key: `prodimages/${req.file.filename}`,
+    };
+
+    s3.upload(params, (err, data) => {
+      
+      if (err) {
+        req.flash("S3 Upload Error, please contact IcePlanet", "error");
+        logger.error("S3 Upload Error");
+        logger.error(err);
+        return res.redirect("/products/productdetails/product/new");
+      }
+
+      console.log("33333333333333333333333333333333333333333333333333333333");
+
+      if (data) {
+        fs.unlinkSync(req.file.path);
+        product.imagePath = data.Location;
+        console.log(product);
+        Product.create(product)
+          .then((createdProduct) => {
+
+            logger.info(
+              "Product created successfully : " + createdProduct._id
+            );
+            req.flash("Product created successfully", "success");
+            return res.redirect(
+              "/products/productdetails/" + createdProduct._id
+            );
+          })
+          .catch((err) => {
+            console.log("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC");
+            console.log(err);
+            logger.error(err);
+            req.flash("Product creation failed", "error");
+            return res.redirect("/products/productdetails/product/new");
+          });
+      } else {
+        console.log("5555555555555555555555555555555");
+        req.flash("S3 Data Upload Error, please contact IcePlanet", "error");
+        logger.error("S3 Data Upload Error");
+        logger.error(err);
+        return res.redirect("/products/productdetails/product/new");
+      }
+    });
+  } else {
+    console.log('No File uploaded');
+    logger.error('No File uploaded');
+    req.flash('Please upload Product Image File');
+    return res.redirect("/products/productdetails/product/new");
+  }
+
+  console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
+};
 
 function numberWithCommas(x) {
   x = x.toString();

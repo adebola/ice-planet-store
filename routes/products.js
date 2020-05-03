@@ -14,8 +14,12 @@ router.post("/add-to-cart/:id", ProductController.addProductToCart);
 router.post('/addremove', ProductController.adjustProductInCart);
 router.get('/deleteproduct/:id', ProductController.deleteProductFromCart);
 router.get('/manage/:page', isAdminGET, ProductController.manageProducts);
+
 router.get('/productdetails/:id', isAdminGET, ProductController.renderProductDetails);
-router.post('/productdetails/update',extractFile, isAdminPOST, ProductController.updateProduct)
+router.get('/productdetails/product/new', isAdminGET, ProductController.renderNewProduct);
+
+router.post('/productdetails/update',extractFile, isAdminPOST, ProductController.updateProduct);
+router.post('/productdetails/product/new',extractFile, isAdminPOST, ProductController.newProduct);
 //router.put('/productdetails/image/:id', extractFile, isAdminPOST, ProductController.updateImage);
 router.post('/productdetails/bundle', isAdminPOST, ProductController.addBundle);
 router.post('/productdetails/bundle/suspend', isAdminPOST, ProductController.suspendBundle);
