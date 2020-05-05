@@ -14,7 +14,8 @@ router.post("/add-to-cart/:id", ProductController.addProductToCart);
 router.post('/addremove', ProductController.adjustProductInCart);
 router.get('/deleteproduct/:id', ProductController.deleteProductFromCart);
 router.get('/manage/:page', isAdminGET, ProductController.manageProducts);
-
+router.post('/add-delivery', ProductController.addDelivery);
+router.post('/remove-delivery', ProductController.removeDelivery);
 router.get('/productdetails/:id', isAdminGET, ProductController.renderProductDetails);
 router.get('/productdetails/product/new', isAdminGET, ProductController.renderNewProduct);
 

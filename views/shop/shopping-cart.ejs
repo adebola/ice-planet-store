@@ -98,16 +98,16 @@
               <i class="fa fa-trash" aria-hidden="true"></i>
             </a>
           </div>
+
         </div>
       </div>
       <hr />
       <% } }); }); %>
-       <!-- END PRODUCT -->
-      <div class="row" id="delivery-item" style="display: none;">
-        <div class="col-md-2 col-12 col-sm-12 text-center">
-          <i class="fal fa-shuttle-van fa-2x"></i>
-        </div>
 
+      <div id="delivery-row" class="row" style="display: none;">
+        <div class="col-md-2 col-12 col-sm-12 text-center">
+          <i class="fad fa-dolly fa-3x"></i>
+        </div>
         <div
           class="col-12 col-sm-12 text-center text-md-right text-lg-left col-md-5"
         >
@@ -118,16 +118,15 @@
             >
           </h4>
         </div>
-        <hr>
       </div>
-      
+      <hr/>
     </div>
 
     <div class="option-group-container container">
     <div class="option-group">
       <div class="option-container">
     
-        <input class="option-input" checked id="option-1" type="radio" name="options" value="pickup" onchange="handleOptions(this)"/>
+        <input class="option-input" checked id="option-1" type="radio" name="options" value="pickup" checked data-checked="true" onchange="handleOptions(this)"/>
         <input class="option-input" id="option-2" type="radio" name="options" value="deliver" onchange="handleOptions(this)"/>
         
         <label class="option" for="option-1">
@@ -208,7 +207,7 @@
         <!-- <a href="/orders/start-transaction" class="btn btn-success float-right">Checkout</a> -->
         <button class="btn btn-success float-right" onclick="processPayment()">Checkout</button>
         <div class="float-right" style="margin: 5px">
-          Total price: <b>&#x20A6;<%= totalPrice %></b>
+          Total price: <b>&#x20A6;<span id="price"><%= totalPrice %></span></b>
         </div>
       </div>
     </div>

@@ -1,9 +1,8 @@
 .option-group-container {
   border-radius: 0.5em;
   border: 1px solid #f0ad4e;
-  max-width: 500px;
-  margin-bottom: 5px;
-}
+  max-width: 450px;
+  margin-bottom: 5px; }
 
 .option-group {
   width: 90%;
@@ -12,8 +11,7 @@
   position: relative;
   overflow: hidden;
   font-size: 4rem;
-  transform: translateZ(0);
-}
+  transform: translateZ(0); }
 
 .option-container {
   display: flex;
@@ -21,8 +19,7 @@
   align-items: stretch;
   width: 120%;
   height: 100%;
-  margin: 0 -10%;
-}
+  margin: 0 -10%; }
 
 .option {
   overflow: hidden;
@@ -43,11 +40,10 @@
   transition-duration: 0.8s, 0.6s;
   transition-property: transform, opacity;
   transition-timing-function: cubic-bezier(0.98, 0, 0.22, 0.98), linear;
-  will-change: transform, opacity;
-}
+  will-change: transform, opacity; }
+
 .option:last-child {
-  margin-right: 0;
-}
+  margin-right: 0; }
 
 .option__indicator {
   display: block;
@@ -57,10 +53,9 @@
   position: absolute;
   top: 0.5em;
   right: 0.5em;
-  left: 0.5em;
-}
-.option__indicator:before,
-.option__indicator:after {
+  left: 0.5em; }
+
+.option__indicator:before, .option__indicator:after {
   content: "";
   display: block;
   border: solid 2px #f0ad4e;
@@ -69,21 +64,19 @@
   height: 0.25em;
   position: absolute;
   top: 0;
-  right: 0;
-}
+  right: 0; }
+
 .option__indicator:after {
   background: #f0ad4e;
   transform: scale(0);
   transition: inherit;
-  will-change: transform;
-}
+  will-change: transform; }
 
 .option-input {
   position: absolute;
   top: 0;
   z-index: -1;
-  visibility: hidden;
-}
+  visibility: hidden; }
 
 .option__label {
   display: block;
@@ -94,14 +87,14 @@
   transform-origin: left bottom;
   transform: translateX(20%) scale(0.7);
   transition: inherit;
-  will-change: transform;
-}
+  will-change: transform; }
+
 .option__label sub {
   margin-left: 0.25em;
   font-size: 0.4em;
   display: inline-block;
-  vertical-align: 0.3em;
-}
+  vertical-align: 0.3em; }
+
 .option__label:after {
   content: "";
   display: block;
@@ -110,70 +103,46 @@
   transform-origin: 0 0;
   transform: scaleX(0.2);
   transition: inherit;
-  will-change: transform;
-}
+  will-change: transform; }
 
 .option:last-child .option__label {
-  transform: translateX(0%) scale(0.7);
-}
+  transform: translateX(0%) scale(0.7); }
 
 .option:last-child .option__indicator {
-  transform: translateX(-20%);
-}
+  transform: translateX(-20%); }
 
 .option-input:checked ~ .option {
-  transform: translateX(-20%) translateX(0.2em);
-}
+  transform: translateX(-20%) translateX(0.2em); }
+
 .option-input:checked ~ .option .option__indicator {
-  transform: translateX(0%);
-}
+  transform: translateX(0%); }
+
 .option-input:checked ~ .option .option__label {
-  transform: translateX(40%) scale(0.7);
-}
+  transform: translateX(40%) scale(0.7); }
 
 .option-input:first-child:checked ~ .option {
-  transform: translateX(20%) translateX(-0.2em);
-}
+  transform: translateX(20%) translateX(-0.2em); }
+
 .option-input:first-child:checked ~ .option .option__indicator {
-  transform: translateX(-40%);
-}
+  transform: translateX(-40%); }
+
 .option-input:first-child:checked ~ .option .option__label {
-  transform: translateX(0%) scale(0.7);
-}
+  transform: translateX(0%) scale(0.7); }
 
 .option-input:nth-child(1):checked ~ .option:nth-of-type(1),
 .option-input:nth-child(2):checked ~ .option:nth-of-type(2) {
-  opacity: 1;
-}
+  opacity: 1; }
+
 .option-input:nth-child(1):checked ~ .option:nth-of-type(1) .option__indicator,
 .option-input:nth-child(2):checked ~ .option:nth-of-type(2) .option__indicator {
-  transform: translateX(0);
-}
-.option-input:nth-child(1):checked
-  ~ .option:nth-of-type(1)
-  .option__indicator::after,
-.option-input:nth-child(2):checked
-  ~ .option:nth-of-type(2)
-  .option__indicator::after {
-  transform: scale(1);
-}
+  transform: translateX(0); }
+
+.option-input:nth-child(1):checked ~ .option:nth-of-type(1) .option__indicator::after,
+.option-input:nth-child(2):checked ~ .option:nth-of-type(2) .option__indicator::after {
+  transform: scale(1); }
+
 .option-input:nth-child(1):checked ~ .option:nth-of-type(1) .option__label,
-.option-input:nth-child(1):checked
-  ~ .option:nth-of-type(1)
-  .option__label::after,
+.option-input:nth-child(1):checked ~ .option:nth-of-type(1) .option__label::after,
 .option-input:nth-child(2):checked ~ .option:nth-of-type(2) .option__label,
-.option-input:nth-child(2):checked
-  ~ .option:nth-of-type(2)
-  .option__label::after {
-  transform: scale(1);
-}
-
-@media only screen and (max-width: 768px) {
-  .option-group-container {
-    max-width: 375px;
-  }
-
-  .option__label {
-    font-size: 1.2em;
-  }
-}
+.option-input:nth-child(2):checked ~ .option:nth-of-type(2) .option__label::after {
+  transform: scale(1); }

@@ -4,6 +4,22 @@ module.exports = function Cart(oldCart) {
   this.items = oldCart.items || {};
   this.totalQty = oldCart.totalQty || 0;
   this.totalPrice = oldCart.totalPrice || 0;
+  this.delivery = oldCart.delivery || 0;
+
+  this.addDelivery = function() {
+   if (this.delivery == 0) {
+     this.delivery = 1000;
+     this.totalPrice += 1000;
+     console.log(this.totalPrice);
+   }
+  }
+
+  this.removeDelivery = function () {
+    if (this.delivery > 0) {
+      this.totalPrice -= this.delivery;
+      this.delivery = 0;
+    }
+  }
 
   this.add = function(item, productId, bundleId, qty) {
 
@@ -32,8 +48,6 @@ module.exports = function Cart(oldCart) {
           bundle.subTotalPrice = 0;
         }
       });
-
-      console.log('AAAAAAAAAAAAAAAAAAA ' + this.totalQty)
     } else {
       logger.info("Cart Object StoredItem Found");
 
@@ -54,14 +68,10 @@ module.exports = function Cart(oldCart) {
           logger.info("Cart Object Inside Bundle.Equals Item Found")
         }
       });
-
-      console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB ' + this.totalQty)
     }
 
     this.totalQty += addQty;
     this.totalPrice += addPrice;
-
-    console.log('CCCCCCCCCCCCCCCCCCCCCCCCCCC ' + this.totalQty)
   };
 
   this.addByOne = function(id) {
@@ -69,8 +79,6 @@ module.exports = function Cart(oldCart) {
     this.items[id].price += this.items[id].item.price;
     this.totalQty++;
     this.totalPrice += this.items[id].item.price;
-
-    console.log('XXXXXXXXXXXXXXXXXXXXXX ' + this.totalQty);
   };
 
   this.reduceByOne = function(id) {
@@ -82,8 +90,6 @@ module.exports = function Cart(oldCart) {
     if (this.items[id].qty <= 0) {
       delete this.items[id];
     }
-
-    console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ ' + this.totalQty);
   };
 
   this.removeItem = function(id) {

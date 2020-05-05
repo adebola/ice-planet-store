@@ -4,8 +4,7 @@
   background-color: #eee;
   position: relative;
   width: 80px;
-  overflow: hidden
-}
+  overflow: hidden; }
 
 .quantity input {
   margin: 0;
@@ -18,8 +17,7 @@
   font-size: 20px;
   border: 0;
   outline: 0;
-  background-color: #F6F6F6
-}
+  background-color: #F6F6F6; }
 
 .quantity input.qty {
   position: relative;
@@ -31,8 +29,7 @@
   font-weight: 400;
   font-size: 15px;
   border-radius: 0;
-  background-clip: padding-box
-}
+  background-clip: padding-box; }
 
 .quantity .minus, .quantity .plus {
   line-height: 0;
@@ -50,28 +47,28 @@
   right: 0;
   padding: 0;
   width: 25px;
-  z-index: 3
-}
+  z-index: 3; }
 
 .quantity .minus:hover, .quantity .plus:hover {
-  background-color: #dad8da
-}
+  background-color: #dad8da; }
 
 .quantity .minus {
-  bottom: 0
-}
-.shopping-cart {
-  margin-top: 20px;
-}
+  bottom: 0; }
 
-#deliver, #credit, #org  {
-  display: none;
-}
+.shopping-cart {
+  margin-top: 20px; }
+
+#deliver, #credit, #org {
+  display: none; }
 
 .cart-info {
   margin-left: 10%;
-  margin-right: 10%;
-}
+  margin-right: 10%; }
+
+@media only screen and (max-width: 767px) {
+  .cart-info {
+    margin-left: 2.5%;
+    margin-right: 2.5%; } }
 
 /* .custom-file-input {
   color: transparent;
@@ -104,7 +101,6 @@
 .custom-file-input:active::before {
   background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9); 
 } */
-
 .js .inputfile {
   width: 0.1px;
   height: 0.1px;
@@ -112,8 +108,7 @@
   overflow: hidden;
   position: absolute;
   z-index: -1;
-  display: none;
-}
+  display: none; }
 
 .inputfile + label {
   max-width: 80%;
@@ -126,23 +121,19 @@
   display: inline;
   overflow: hidden;
   padding: 0.625rem 1.25rem;
-  /* 10px 20px */
-}
+  /* 10px 20px */ }
 
 .no-js .inputfile + label {
-  display: none;
-}
+  display: none; }
 
 .inputfile:focus + label,
 .inputfile.has-focus + label {
   outline: 1px dotted #000;
-  outline: -webkit-focus-ring-color auto 5px;
-}
+  outline: -webkit-focus-ring-color auto 5px; }
 
 .inputfile + label * {
   /* pointer-events: none; */
-  /* in case of FastClick lib use */
-}
+  /* in case of FastClick lib use */ }
 
 .inputfile + label svg {
   width: 1em;
@@ -152,19 +143,14 @@
   margin-top: -0.25em;
   /* 4px */
   margin-right: 0.25em;
-  /* 4px */
-}
-
+  /* 4px */ }
 
 /* style 1 */
-
 .inputfile-1 + label {
   color: black;
-  background-color:#F5C444;
-}
+  background-color: #F5C444; }
 
 .inputfile-1:focus + label,
 .inputfile-1.has-focus + label,
 .inputfile-1 + label:hover {
-  background-color: #722040;
-}
+  background-color: #722040; }

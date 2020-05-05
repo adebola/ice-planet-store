@@ -136,6 +136,22 @@ function generateHeader(doc) {
       });
     }
 
+    if (order.cart.delivery && order.cart.delivery > 0) {
+      const position = orderTableTop + (i + 1) * 30;
+
+          generateTableRow(
+            doc,
+            position,
+            '',
+            '',
+            'Delivery',
+            '',
+            formatCurrency(order.cart.delivery)
+          );
+          generateHr(doc, position + 20);
+          i++;
+    }
+
     const subtotalPosition = orderTableTop + (i + 1) * 30;
     generateTableRow(
       doc,

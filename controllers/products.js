@@ -47,27 +47,6 @@ exports.getAllProducts = (req, res, next) => {
       }
     }
   );
-
-  // Product.find({}, (err, products) => {
-  //   if (err) {
-  //     var message =
-  //       "Error Loading Products from Database, please try refreshing the page : " +
-  //       err.message;
-  //     logger.error(message);
-  //     res.render("error/error", {
-  //       message: message,
-  //       csrfToken: req.csrfToken(),
-  //     });
-  //   } else {
-  //     var errMessage = req.query.errMessage;
-
-  //     res.render("shop/index", {
-  //       products: products,
-  //       csrfToken: req.csrfToken(),
-  //       errMessage: errMessage ? errMessage : null,
-  //     });
-  //   }
-  // });
 };
 
 exports.getProductBundles = (req, res, next) => {
@@ -213,7 +192,7 @@ exports.deleteProductFromCart = (req, res, next) => {
     item.bundles.forEach((bundle) => {
       if (bundle._id == bundleId) {
         cart.totalPrice -= bundle.subTotalPrice;
-        cart.totalQty -= bundle.qty;
+        cart.totalQty -= 1;
         bundle.qty = 0;
         bundle.subTotalPrice = 0;
       } else if (bundle.qty > 0) {
@@ -231,6 +210,28 @@ exports.deleteProductFromCart = (req, res, next) => {
   }
 
   res.redirect("/products/shopping-cart");
+};
+
+exports.addDelivery = (req, res, next) => {
+  const cart = new Cart(req.session.cart ? req.session.cart : {});
+  cart.addDelivery();
+  
+  req.session.cart = cart;
+  
+  return res.status(200).json({
+    message: 'success',
+  }); 
+};
+
+exports.removeDelivery = (req, res, next) => {
+  const cart = new Cart(req.session.cart ? req.session.cart : {});
+  cart.removeDelivery();
+
+  req.session.cart = cart;
+
+  return res.status(200).json({
+    message: 'success',
+  }); 
 };
 
 exports.getShoppingCart = (req, res, next) => {
@@ -548,8 +549,6 @@ exports.newProduct = (req, res, next) => {
         return res.redirect("/products/productdetails/product/new");
       }
 
-      console.log("33333333333333333333333333333333333333333333333333333333");
-
       if (data) {
         fs.unlinkSync(req.file.path);
         product.imagePath = data.Location;
@@ -566,14 +565,12 @@ exports.newProduct = (req, res, next) => {
             );
           })
           .catch((err) => {
-            console.log("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC");
             console.log(err);
             logger.error(err);
             req.flash("Product creation failed", "error");
             return res.redirect("/products/productdetails/product/new");
           });
       } else {
-        console.log("5555555555555555555555555555555");
         req.flash("S3 Data Upload Error, please contact IcePlanet", "error");
         logger.error("S3 Data Upload Error");
         logger.error(err);
@@ -586,8 +583,6 @@ exports.newProduct = (req, res, next) => {
     req.flash('Please upload Product Image File');
     return res.redirect("/products/productdetails/product/new");
   }
-
-  console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
 };
 
 function numberWithCommas(x) {

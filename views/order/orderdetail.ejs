@@ -152,6 +152,15 @@
                   <td>&#x20A6;<%= bundle.subTotalPrice %></td>
                 </tr>
                 <% } }); }); %>
+
+                <% if (order.delivery && order.delivery > 0) { %>
+                  <tr>
+                    <td>Delivery</td>
+                    <td></td>
+                    <td></td>
+                    <td>&#x20A6;<%=order.delivery%></td>
+                  </tr>
+                <% } %>
               </tbody>
             </table>
           </div>

@@ -31,32 +31,69 @@ function showMessage(message, status) {
   errordiv.appendChild(alertElement);
 }
 
-// function showPickupPolicy() {
-//   var policydiv = document.getElementById("pickup");
-//   var policyElement = document.createElement("div");
-//   policyElement.classList.add("alert");
-//   policyElement.classList.add("alert-info");
-
-// }
-
-function numberWithCommas(x) {
-  x = x.toString();
-  var pattern = /(-?\d+)(\d{3})/;
-  while (pattern.test(x)) x = x.replace(pattern, "$1,$2");
-  return x;
-}
-
 function handleOptions(option) {
-  $(".cart-info").css("display", "none");
-  //$("#delivery-item").css("display", "none");
+  let previous = $("input[name=options][data-checked=true]")[0];
 
-  console.log($("#delivery-item"));
+  option.setAttribute("data-checked", "true");
+  previous.removeAttribute("data-checked");
+
+  $(".cart-info").css("display", "none");
+  $("#delivery-row").css("display", "none");
+
+  if (option.id === previous.id) {
+    return;
+  }
+
+  if (previous.id === "option-2") {
+    const url = window.origin + "/products/remove-delivery";
+
+    $.ajax({
+      type: "POST",
+      url: url,
+      data: JSON.stringify({}),
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      headers: {
+        "X-CSRF-Token": $("#_csrf").val(),
+      },
+      success: function (data) {
+        let price = parseFloat($("#price")[0].innerText.replace(/,/g, ""));
+        price = price - 1000;
+        $("#price")[0].innerText = numberWithCommas(price);
+        console.log('Remove Delivery Success');
+      },
+      failure: function (errMsg) {
+        showMessage(errMsg, "error");
+      },
+    });
+  }
 
   if (option.id === "option-1") {
     $("#pickup").css("display", "block");
   } else if (option.id === "option-2") {
-    $("#deliver").css("display", "block");
-    //$("#delivery-item").css("display", "block");
+    var url = window.origin + "/products/add-delivery";
+
+    $.ajax({
+      type: "POST",
+      url: url,
+      data: JSON.stringify({}),
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      headers: {
+        "X-CSRF-Token": $("#_csrf").val(),
+      },
+      success: function (data) {
+        let price = parseFloat($("#price")[0].innerText.replace(/,/g, ""));
+        price = price + 1000;
+        $("#price")[0].innerText = numberWithCommas(price);
+        $("#deliver").css("display", "block");
+        $("#delivery-row").css("display", "flex");
+        console.log('Add Delivery Success');
+      },
+      failure: function (errMsg) {
+        showMessage(errMsg, "error");
+      },
+    });   
   } else if (option.id === "option-3") {
     $("#credit").css("display", "block");
   } else if (option.id === "option-4") {
@@ -87,7 +124,10 @@ function changePrice(selectObject) {
   xhttpReq.onload = () => {
     var data = xhttpReq.response;
 
-    if (xhttpReq.readyState === 4 && (xhttpReq.status === 201 || xhttpReq.status === 200)) {
+    if (
+      xhttpReq.readyState === 4 &&
+      (xhttpReq.status === 201 || xhttpReq.status === 200)
+    ) {
       document.getElementById(
         option.dataset.product
       ).innerText = numberWithCommas(data.price);
@@ -121,6 +161,13 @@ function clickplus(tBox, productId, bundleId) {
     );
   }
 
+  if (value > 99) {
+    return showMessage(
+      "Product Quantity cannot be greater than 99, please contact IcePlanet on 08188111333 or iceplanetstores@gmail.com for such volumes",
+      "error"
+    );
+  }
+
   var data = {
     productId: productId,
     bundleId: bundleId,
@@ -142,7 +189,12 @@ function clickplus(tBox, productId, bundleId) {
   xhttpReq.onload = () => {
     var data = xhttpReq.response;
 
-    if (!(xhttpReq.readyState === 4 && (xhttpReq.status === 201 || xhttpReq.status === 200))) {
+    if (
+      !(
+        xhttpReq.readyState === 4 &&
+        (xhttpReq.status === 201 || xhttpReq.status === 200)
+      )
+    ) {
       return showMessage("Error Amending Shopping Cart", "error");
     }
 
@@ -187,19 +239,6 @@ function processPayment() {
         showMessage(errMsg, "error");
       },
     });
-
-    // $.post(url, data => {
-    //   console.log("Success1");
-    //   console.log(data);
-    // })
-    //   .done(data => {
-    //     console.log("Success2");
-    //     console.log(data);
-    //   })
-    //   .fail(data => {
-    //     console.log("failure");
-    //     console.log(data);
-    //   });
   } else if (value === "credit") {
     // Ensure (a) user is logged in (b) credit facilities approved
     showMessage(
@@ -235,7 +274,10 @@ function payWithPaystack() {
   xhttpReq.onload = () => {
     var indata = xhttpReq.response;
 
-    if (xhttpReq.readyState === 4 && (xhttpReq.status === 201 || xhttpReq.status === 200)) {
+    if (
+      xhttpReq.readyState === 4 &&
+      (xhttpReq.status === 201 || xhttpReq.status === 200)
+    ) {
       var handler = PaystackPop.setup({
         //key: "pk_test_94dbaebf2467e2b41e3552f23a093e7e55cbe57e",
         key: "pk_live_03b4aca139cfec3fc9b816440742819e32d87bc4",
@@ -263,7 +305,10 @@ function payWithPaystack() {
           });
 
           xhttpReq2.onload = () => {
-            if (xhttpReq2.readyState === 4 && (xhttpReq2.status === 201 || xhttpReq2.status === 200)) {
+            if (
+              xhttpReq2.readyState === 4 &&
+              (xhttpReq2.status === 201 || xhttpReq2.status === 200)
+            ) {
               window.location.href = "/products/shopping-cart";
             } else {
               showMessage(xhttpReq2.response, "error");
@@ -352,9 +397,15 @@ function dec2hex(dec) {
   return ("0" + dec.toString(16)).substr(-2);
 }
 
-// generateId :: Integer -> String
 function generateId(len) {
   var arr = new Uint8Array((len || 40) / 2);
   window.crypto.getRandomValues(arr);
   return Array.from(arr, dec2hex).join("");
+}
+
+function numberWithCommas(x) {
+  x = x.toString();
+  var pattern = /(-?\d+)(\d{3})/;
+  while (pattern.test(x)) x = x.replace(pattern, "$1,$2");
+  return x;
 }

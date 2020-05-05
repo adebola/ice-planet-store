@@ -314,6 +314,7 @@ exports.renderOrderDetails = (req, res, next) => {
   .lean()
   .then(order => {
     order.totalPrice = numberWithCommas(order.cart.totalPrice);
+    order.delivery = order.cart.delivery;
     order.cart = new Cart(order.cart).generateArray();
     // console.log(order);
     res.render('order/orderdetail', {
