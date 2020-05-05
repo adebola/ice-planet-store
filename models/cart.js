@@ -96,6 +96,10 @@ module.exports = function Cart(oldCart) {
     this.totalQty -= this.items[id].qty;
     this.totalPrice -= this.items[id].price;
 
+    if (this.totalQty == 0) {
+      this.delivery = 0;
+    }
+
     delete this.items[id];
   };
 

@@ -204,6 +204,14 @@ exports.deleteProductFromCart = (req, res, next) => {
       delete cart.items[productId];
     }
 
+    console.log('CART TOTAL : ' + cart.totalQty + 'CART MONEY : ' + cart.totalPrice);
+    if (cart.totalQty == 0 || cart.totalPrice == 0) {
+      req.session.cart = null;
+    } else {
+      req.session.cart = cart;
+    }
+
+
     req.session.save();
   } else {
     logger.error("router.post(/deleteproduct) => Product Not Found in Cart");
@@ -215,7 +223,7 @@ exports.deleteProductFromCart = (req, res, next) => {
 exports.addDelivery = (req, res, next) => {
   const cart = new Cart(req.session.cart ? req.session.cart : {});
   cart.addDelivery();
-  
+
   req.session.cart = cart;
   
   return res.status(200).json({
