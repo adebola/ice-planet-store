@@ -11,26 +11,6 @@ function Validate() {
   return true;
 }
 
-function showMessage(message, status) {
-  var errordiv = document.getElementById("error-caption");
-
-  // Clear Earlier Messages
-  while (errordiv.firstChild) {
-    errordiv.firstChild.remove();
-  }
-
-  var alertElement = document.createElement("div");
-  alertElement.classList.add("alert");
-
-  if (status === "error") {
-    alertElement.classList.add("alert-danger");
-  } else {
-    alertElement.classList.add("alert-success");
-  }
-  alertElement.innerHTML = message;
-  errordiv.appendChild(alertElement);
-}
-
 function handleOptions(option) {
   let previous = $("input[name=options][data-checked=true]")[0];
 
@@ -60,7 +40,7 @@ function handleOptions(option) {
         let price = parseFloat($("#price")[0].innerText.replace(/,/g, ""));
         price = price - 1000;
         $("#price")[0].innerText = numberWithCommas(price);
-        console.log('Remove Delivery Success');
+        console.log("Remove Delivery Success");
       },
       failure: function (errMsg) {
         showMessage(errMsg, "error");
@@ -88,12 +68,12 @@ function handleOptions(option) {
         $("#price")[0].innerText = numberWithCommas(price);
         $("#deliver").css("display", "block");
         $("#delivery-row").css("display", "flex");
-        console.log('Add Delivery Success');
+        console.log("Add Delivery Success");
       },
       failure: function (errMsg) {
         showMessage(errMsg, "error");
       },
-    });   
+    });
   } else if (option.id === "option-3") {
     $("#credit").css("display", "block");
   } else if (option.id === "option-4") {
@@ -232,27 +212,27 @@ function processPayment() {
         if (data.message === "OK") {
           payWithPaystack();
         } else {
-          showMessage(data.message, "error");
+          showModalMessage(data.message, 'Information')
         }
       },
       failure: function (errMsg) {
-        showMessage(errMsg, "error");
+        showModalMessage(errMsg, 'Error')
       },
     });
   } else if (value === "credit") {
     // Ensure (a) user is logged in (b) credit facilities approved
-    showMessage(
+    showModalMessage(
       "Please Contact Ice-Planet on 08188111333 / 08075210001 or info@iceplanet.store, to setup credit facilities",
-      "error"
+      "Information"
     );
     // var url = window.origin + "/orders/check-credit";
   } else if (value === "org") {
     // Ensure (a) user is logged in (b) user is an org user (c) credit facilities approved
     //var url = window.origin + "/orders/check-org";
 
-    showMessage(
+    showModalMessage(
       "Please contact Ice-Planet on 08188111333 / 08075210001 or info@iceplanet.store to setup organizational and/or credit facilities",
-      "error"
+      "Information"
     );
   }
 }
@@ -311,13 +291,13 @@ function payWithPaystack() {
             ) {
               window.location.href = "/products/shopping-cart";
             } else {
-              showMessage(xhttpReq2.response, "error");
+              showModalMessage(xhttpReq2.response, "Error");
             }
           };
 
           xhttpReq2.onerror = () => {
             var message = "Error Saving Paystack backend Payment details";
-            showMessage(message, "error");
+            showModalMessage(message, "Error");
           };
 
           xhttpReq2.send(json2);
@@ -326,14 +306,14 @@ function payWithPaystack() {
       });
       handler.openIframe();
     } else {
-      showMessage(indata, "error");
+      showModalMessage(indata, "Error");
     }
   };
 
   xhttpReq.onerror = () => {
     var message = "Error Getting Paystack backend Payment details";
 
-    showMessage(message, "error");
+    showModalMessage(message, "error");
   };
 
   xhttpReq.send(json);
@@ -408,4 +388,41 @@ function numberWithCommas(x) {
   var pattern = /(-?\d+)(\d{3})/;
   while (pattern.test(x)) x = x.replace(pattern, "$1,$2");
   return x;
+}
+
+function showMessage(message, status) {
+  var errordiv = document.getElementById("error-caption");
+
+  // Clear Earlier Messages
+  while (errordiv.firstChild) {
+    errordiv.firstChild.remove();
+  }
+
+  var alertElement = document.createElement("div");
+  alertElement.classList.add("alert");
+
+  if (status === "error") {
+    alertElement.classList.add("alert-danger");
+  } else {
+    alertElement.classList.add("alert-success");
+  }
+  alertElement.innerHTML = message;
+  errordiv.appendChild(alertElement);
+}
+
+function showModalMessage(message, status) {
+  var $msgModal = $("#modalCenter").modal({
+    backdrop: false,
+    show: false,
+    keyboard: false,
+  });
+
+  $msgModal
+    .find(".modal-header > div > div > h5")
+    .text(status)
+    .end()
+    .find("#modalBody")
+    .html(message)
+    .end()
+    .modal("show");
 }

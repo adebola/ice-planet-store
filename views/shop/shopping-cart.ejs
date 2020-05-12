@@ -145,7 +145,8 @@
     
       </div>
     </div>
-    <div class="option-group">
+
+    <!-- <div class="option-group">
       <div class="option-container">
     
         <input class="option-input" id="option-3" type="radio" name="options" value="credit" onchange="handleOptions(this)"/>
@@ -166,7 +167,8 @@
         </label>
     
       </div>
-    </div>
+    </div> -->
+
     </div>
 
     <div class="alert alert-primary cart-info" id="pickup">
@@ -221,6 +223,37 @@
 </div>
 
 <% } %>
+
+<div class="modal fade" id="modalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="row" style="width: 100%;">
+          <div class="col-md-6 text-center text-md-left">
+            <div class="container" style="max-width: 100px;">
+              <img src="/images/logo.png" class="img-fluid" />
+            </div>
+          </div>
+          <div class="col-md-6 mt-2 text-center text-md-left">
+            <h5>
+              Information
+            </h5>
+          </div>
+        </div>
+      
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div id="modalBody" class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script src="https://js.paystack.co/v1/inline.js"></script>
 <script src="/javascripts/script.js"></script>

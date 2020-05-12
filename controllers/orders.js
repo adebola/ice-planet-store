@@ -258,14 +258,14 @@ exports.verifypayment = (req, res, next) => {
           logger.error("Error Connecting to Payment Switch: " + err);
           return res
             .status(response.statusCode)
-            .json({ message: 'Error Verifying Payment ' + responseMessage.message});
+            .json({ message: 'Error Verifying Payment'});
         } else if (response.statusCode === 400) {
           logger.info('Payment could not be verified : ' + order._id);
           return res
           .status(response.statusCode)
           .json({message: responseMessage.message });
         } else if (!(/^2/.test('' + response.statusCode))) {
-          logger.info('Payment could not be verified status code ' + response.statusCode + ' for ' + order._id);
+          logger.info('Payment could not be verified status code for ' + order._id);
           return res
           .status(response.statusCode)
           .json({message: 'Payment Could not be verified'});
