@@ -1,0 +1,146 @@
+<% include ../partials/header %>
+
+<div class="card shopping-cart mx-auto" style="max-width: 90%;">
+  <div class="card-header bg-dark text-light">
+    <i class="far fa-users"></i>
+    View Customer Orders
+    <div class="clearfix"></div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mx-auto" style="max-width: 500px;">
+      <article class="card-body">
+        <input type="hidden" id="_csrf" name="_csrf" value="<%=csrfToken%>" />
+
+        <!-- FullName Input -->
+        <div class="form-group input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text"> <i class="fal fa-user"></i> </span>
+          </div>
+          <input
+            name="fullname"
+            class="form-control"
+            placeholder="Full Name"
+            type="text"
+            value="<%=user.fullName%>"
+            disabled
+          />
+        </div>
+
+        <!-- E-mail Input -->
+        <div class="form-group input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="fal fa-envelope"></i>
+            </span>
+          </div>
+          <input
+            name="email"
+            class="form-control"
+            placeholder="Email address"
+            type="email"
+            value="<%=user.email%>"
+            disabled
+          />
+        </div>
+        <!-- Telephone Number -->
+        <div class="form-group input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text"> <i class="fal fa-phone"></i> </span>
+          </div>
+          <input
+            name="telephone"
+            class="form-control"
+            placeholder="Phone number"
+            value="<%=user.telephoneNumber ? user.telephoneNumber : 'None'%>"
+            type="text"
+            disabled
+          />
+        </div>
+
+        <!-- Organization -->
+        <div class="form-group input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="far fa-sitemap"></i>
+            </span>
+          </div>
+          <input
+            name="organization"
+            class="form-control"
+            placeholder="Organization"
+            value="<%=user.organization ? user.organization : 'None'%>"
+            disabled
+            type="text"
+            disabled
+          />
+        </div>
+
+        <div class="form-group input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text"
+              ><i class="fal fa-map-marker-alt"></i
+            ></span>
+          </div>
+
+          <textarea
+            disabled
+            class="form-control"
+            id="txtAddress"
+            name="address"
+            cols="60"
+            rows="10"
+            placeholder="Address"
+          >
+<%=user.address ? user.address : 'None' %></textarea
+          >
+        </div>
+      </article>
+    </div>
+    <div class="col-md-6 mx-auto" style="max-width: 500px;">
+      <table class="table table-striped table-bordered table-list mt-2">
+        <thead>
+          <tr>
+            <th class="hidden-xs">ID</th>
+            <th>Date</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% let totalValue = 0; if (user.orders) { user.orders.forEach(order =>
+          { %>
+          <tr>
+            <td class="hidden-xs">
+              <a href="/orders/orderdetails/<%= order._id%>"
+                ><%= order._id.toString().substring(0,4) + '..' %></a
+              >
+            </td>
+            <td>
+              <% 
+              let newdate = new Date(order.date); 
+              let day = newdate.getDate();
+              let month = newdate.getMonth() + 1;
+              let year = newdate.getFullYear();
+              let strday = day < 10 ? '0' + day : day; 
+              let strmonth = month < 10 ? '0' + month : month; 
+              let fmtString = strday + '/' + strmonth + '/' + year;
+              %> 
+              <%= fmtString.trim()%>
+            </td>
+            <td>&#x20A6;<%= order.cart.totalPrice %></td>
+          </tr>
+          <% totalValue += +order.cart.totalPrice;});} %>
+
+          <tr>
+            <td></td>
+            <td>Total</td>
+            <td>&#x20A6; <%=totalValue%></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" src="/javascripts/script.js"></script>
+
+<% include ../partials/footer %>

@@ -25,6 +25,10 @@ router.get("/signup", UserController.renderSignup);
 router.get("/changepassword", isLoggedIn, UserController.renderChangePassword);
 router.post("/changepassword/:userId", isLoggedIn, UserController.changePassword);
 router.get('/noaccess', UserController.accessDenied);
+
+router.get('/list/:page', isAdminGET, UserController.renderUserList);
+router.get('/single/:id', isAdminGET, UserController.renderSingleUser);
+
 router.use("/", notLoggedIn, UserController.defaultPage);
 
 router.post("/signup",
@@ -57,6 +61,24 @@ function notLoggedIn(req, res, next) {
   }
 
   res.redirect("/products");
+}
+
+function isAdminGET(req, res, next) {
+  if (req.isAuthenticated() && req.user.userType && req.user.userType === 'admin') {
+    return next();
+  }
+
+  res.redirect('/users/noaccess');
+}
+
+function isAdminPOST(req, res, next) {
+  if (req.isAuthenticated() && req.user.userType && req.user.userType === 'admin') {
+    return next();
+  }
+
+  return res.status(403).json({
+    message: 'You do not have permissions to access to the resource'
+  });
 }
 
 module.exports = router;

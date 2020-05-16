@@ -413,13 +413,13 @@ exports.orderHistory = (req, res, next) => {
           logger.error(errMessage);
 
           return res.render("error/error", {
-            csrfToken: req.csrfToken,
+            csrfToken: req.csrfToken(),
             message: errMessage,
           });
         }
 
         res.render("user/orderhistory", {
-          csrfToken: req.csrfToken,
+          csrfToken: req.csrfToken(),
           current: page,
           pages: Math.ceil(count / perPage),
           orders: orders,
@@ -432,4 +432,75 @@ exports.accessDenied = (req, res, next) => {
   return res.render('shop/access-denied', {
     csrfToken: req.csrfToken()
   });
+};
+
+exports.renderUserList = (req, res, next) => {
+
+  var perPage = 10;
+  var page = req.params.page || 1;
+
+  User.find({})
+    .skip(perPage * page - perPage)
+    .limit(perPage)
+    .exec((err, users) => {
+      User.count().exec((err, count) => {
+        if (err) {
+          var errMessage = "User.count() error: " + err.message;
+
+          logger.error(errMessage);
+
+          return res.render("error/error", {
+            csrfToken: req.csrfToken(),
+            message: errMessage,
+          });
+        }
+
+        res.render("user/userlist", {
+          csrfToken: req.csrfToken(),
+          current: page,
+          pages: Math.ceil(count / perPage),
+          users: users,
+        });
+      });
+    });
+};
+
+exports.renderSingleUser = (req, res, next) => {
+  var userId = req.params.id;
+
+  if (userId) {
+    User.findOne({_id: userId})
+    .lean()
+    .then(foundUser => {
+      // Find User Orders
+      Order.find({user: userId})
+      .lean()
+      .then(orders => {
+
+        foundUser.orders = orders;
+
+        res.render('user/userdetails', {
+          csrfToken: req.csrfToken(),
+          user: foundUser
+        });
+      })
+      .catch(err => {
+        req.flash('Error Rendering Single User, unable to,load Orders');
+        logger.error(err);
+
+        return res.redirect('/users/list/1');
+      })
+    })
+    .catch(err => {
+      req.flash('Error Rendering Single User, unable to,load User');
+      logger.error(err);
+
+      return res.redirect('/users/list/1');
+    });
+  } else {
+    req.flash('Error UserId Not Supplied');
+      logger.error('User ID not supplied in renderSingle User Request');
+
+      return res.redirect('/users/list/1');
+  }
 };
