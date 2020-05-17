@@ -252,10 +252,14 @@ exports.getShoppingCart = (req, res, next) => {
 
   var cart = new Cart(req.session.cart);
 
+  if (cart.delivery && cart.delivery > 0) {
+    cart.totalPrice -= cart.delivery;
+  }
+
   res.render("shop/shopping-cart", {
     products: cart.generateArray(),
     totalPrice: numberWithCommas(cart.totalPrice),
-    delivery: 0,
+    delivery: cart.delivery,
     csrfToken: req.csrfToken(),
   });
 };
@@ -273,6 +277,7 @@ exports.manageProducts = (req, res, next) => {
         if (err) {
           logger.error("Error Counting Products in Database : " + err);
           req.flash(
+            'error',
             "Technical Error in Produc::Count, Please Contact IcePlanet Support " +
               err
           );
@@ -459,7 +464,7 @@ exports.updateProduct = (req, res, next) => {
 
     s3.upload(params, (err, data) => {
       if (err) {
-        req.flash("S3 Upload Error, please contact IcePlanet", "error");
+        req.flash("error", "S3 Upload Error, please contact IcePlanet");
         logger.error("S3 Upload Error");
         logger.error(err);
         return res.redirect("/products/productdetails/" + req.body.productid);
@@ -484,11 +489,11 @@ exports.updateProduct = (req, res, next) => {
         )
           .then((result) => {
             logger.info(result);
-            req.flash("Product updated Successfully", "success");
+            req.flash("success", "Product updated Successfully");
           })
           .catch((err) => {
             logger.error(err);
-            req.flash("Error updating Product", "error");
+            req.flash("error", "Error updating Product");
           });
       }
     });
@@ -505,11 +510,11 @@ exports.updateProduct = (req, res, next) => {
     )
       .then((result) => {
         logger.info(result);
-        req.flash("Product updated Successfully", "success");
+        req.flash("success", "Product updated Successfully");
       })
       .catch((err) => {
         logger.error(err);
-        req.flash("Error updating Product", "error");
+        req.flash("error", "Error updating Product");
       });
   }
 
@@ -551,7 +556,7 @@ exports.newProduct = (req, res, next) => {
     s3.upload(params, (err, data) => {
       
       if (err) {
-        req.flash("S3 Upload Error, please contact IcePlanet", "error");
+        req.flash("error", "S3 Upload Error, please contact IcePlanet");
         logger.error("S3 Upload Error");
         logger.error(err);
         return res.redirect("/products/productdetails/product/new");
@@ -567,7 +572,7 @@ exports.newProduct = (req, res, next) => {
             logger.info(
               "Product created successfully : " + createdProduct._id
             );
-            req.flash("Product created successfully", "success");
+            req.flash("success", "Product created successfully");
             return res.redirect(
               "/products/productdetails/" + createdProduct._id
             );
@@ -575,11 +580,11 @@ exports.newProduct = (req, res, next) => {
           .catch((err) => {
             console.log(err);
             logger.error(err);
-            req.flash("Product creation failed", "error");
+            req.flash("error","Product creation failed");
             return res.redirect("/products/productdetails/product/new");
           });
       } else {
-        req.flash("S3 Data Upload Error, please contact IcePlanet", "error");
+        req.flash("error","S3 Data Upload Error, please contact IcePlanet");
         logger.error("S3 Data Upload Error");
         logger.error(err);
         return res.redirect("/products/productdetails/product/new");
@@ -588,7 +593,7 @@ exports.newProduct = (req, res, next) => {
   } else {
     console.log('No File uploaded');
     logger.error('No File uploaded');
-    req.flash('Please upload Product Image File');
+    req.flash('error','Please upload Product Image File');
     return res.redirect("/products/productdetails/product/new");
   }
 };

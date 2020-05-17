@@ -171,7 +171,7 @@ passport.use(
             logger.info("user: " + user.email + " logged onto the system");
             return done(null, user);
           } else {
-            req.flash("error", "Wrong UserName or Password");
+            req.flash("error","error", "Wrong UserName or Password");
             return done(null, false);
           }
         });

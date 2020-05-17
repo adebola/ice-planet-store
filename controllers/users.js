@@ -485,20 +485,20 @@ exports.renderSingleUser = (req, res, next) => {
         });
       })
       .catch(err => {
-        req.flash('Error Rendering Single User, unable to,load Orders');
+        req.flash('error','Error Rendering Single User, unable to,load Orders');
         logger.error(err);
 
         return res.redirect('/users/list/1');
       })
     })
     .catch(err => {
-      req.flash('Error Rendering Single User, unable to,load User');
+      req.flash('error','Error Rendering Single User, unable to,load User');
       logger.error(err);
 
       return res.redirect('/users/list/1');
     });
   } else {
-    req.flash('Error UserId Not Supplied');
+    req.flash('error','Error UserId Not Supplied');
       logger.error('User ID not supplied in renderSingle User Request');
 
       return res.redirect('/users/list/1');

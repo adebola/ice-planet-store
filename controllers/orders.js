@@ -155,7 +155,7 @@ exports.manageOrders = (req, res, next) => {
       Order.count().exec((err, count) => {
         if (err) {
           logger.error('Error Counting Orders in Database : ' + err);
-          req.flash('Technical Error in Order::Count, Please Contact IcePlanet Support ' + err);
+          req.flash('error','Technical Error in Order::Count, Please Contact IcePlanet Support ' + err);
           return res.redirect('/orders/manage');
         }
 
@@ -172,7 +172,7 @@ exports.manageOrders = (req, res, next) => {
     .catch((err) => {
       logger.error("Error Loading Orders ; " + err);
       req.flash(
-        "err",
+        "error",
         "There was a network error loading orders, please contact support : " +
           err
       );

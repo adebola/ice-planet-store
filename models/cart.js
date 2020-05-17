@@ -10,7 +10,6 @@ module.exports = function Cart(oldCart) {
    if (this.delivery == 0) {
      this.delivery = 1000;
      this.totalPrice += 1000;
-     console.log(this.totalPrice);
    }
   }
 
