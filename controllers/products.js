@@ -253,13 +253,14 @@ exports.getShoppingCart = (req, res, next) => {
   var cart = new Cart(req.session.cart);
 
   if (cart.delivery && cart.delivery > 0) {
-    cart.totalPrice -= cart.delivery;
+    cart.removeDelivery();
+    req.session.cart = cart;
   }
 
   res.render("shop/shopping-cart", {
     products: cart.generateArray(),
     totalPrice: numberWithCommas(cart.totalPrice),
-    delivery: cart.delivery,
+    delivery: 0,
     csrfToken: req.csrfToken(),
   });
 };
@@ -565,7 +566,6 @@ exports.newProduct = (req, res, next) => {
       if (data) {
         fs.unlinkSync(req.file.path);
         product.imagePath = data.Location;
-        console.log(product);
         Product.create(product)
           .then((createdProduct) => {
 
@@ -578,7 +578,6 @@ exports.newProduct = (req, res, next) => {
             );
           })
           .catch((err) => {
-            console.log(err);
             logger.error(err);
             req.flash("error","Product creation failed");
             return res.redirect("/products/productdetails/product/new");
@@ -591,7 +590,6 @@ exports.newProduct = (req, res, next) => {
       }
     });
   } else {
-    console.log('No File uploaded');
     logger.error('No File uploaded');
     req.flash('error','Please upload Product Image File');
     return res.redirect("/products/productdetails/product/new");
