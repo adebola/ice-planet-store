@@ -16,6 +16,7 @@ const userRouter = require("./routes/users");
 const productRouter = require('./routes/products');
 const orderRouter = require('./routes/orders');
 const contactRouter = require('./routes/contacts');
+const externalContactRouter = require('./routes/external-contacts');
 const logger = require('./config/winston');
 
 const app = express();
@@ -54,6 +55,20 @@ app.use(
   })
 );
 
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "POST, OPTIONS"
+  );
+  
+  next();
+});
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, "public")));
@@ -74,6 +89,7 @@ app.use("/users", userRouter);
 app.use("/products", productRouter);
 app.use("/orders", orderRouter);
 app.use("/contacts", contactRouter);
+app.use("/external-contacts", externalContactRouter);
 
 app.use('*', (req, res, next) => {
   res.render('404');
