@@ -85,7 +85,14 @@
                     <%= fmtString.trim()%>
               
                   </td>
-                  <td><%= order.user ? order.user.fullName : 'Anonymous' %></td>
+                  <td>
+                    <% if (order.user) { %>
+                    <a href="/users/single/<%=order.user._id%>">
+                    <%= order.user.fullName %></a>
+                    <% } else {%>
+                      Anonymous
+                    <% } %>
+                  </td>
                   <td><%= order.cart.totalQty %></td>
                   <td>&#x20A6;<%= order.cart.totalPrice %></td>
                 </tr>
