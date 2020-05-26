@@ -65,3 +65,5 @@ function initMap() {
     icon: image
   });
 }
+
+initMap();
