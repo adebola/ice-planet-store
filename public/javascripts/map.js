@@ -54,10 +54,7 @@ function initMap() {
     center: icePlanet
   });
 
-  console.log(window.origin);
   const image = window.origin + '/images/logo-red-google.png';
-  console.log(image);
-
 
   const marker = new google.maps.Marker({
     position: icePlanet,
