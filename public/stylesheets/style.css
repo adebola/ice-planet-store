@@ -11,3 +11,34 @@ html {
   height: 5%;
   bottom: 0;
 }
+
+.navbar-custom {
+  background-color: #06184e;
+}
+
+.navbar-custom .nav-link  {
+  color: white;
+}
+
+.btn-warning {
+  background-color: #01abd6;
+  border-color: #01abd6;
+  color: whitesmoke;
+}
+
+.btn-warning:hover {
+  background-color: #0088AB;
+  border-color: #01abd6;
+  color: whitesmoke;
+}
+
+.btn-outline-warning {
+  color: #01abd6;
+  border-color: #01abd6;
+}
+
+.btn-outline-warning:hover {
+  background-color: #01abd6;
+  color: white;
+  border-color: #01abd6;
+}
