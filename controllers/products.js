@@ -242,6 +242,10 @@ exports.removeDelivery = (req, res, next) => {
   }); 
 };
 
+exports.addCut = (req, res, next) => {
+  
+}
+
 exports.getShoppingCart = (req, res, next) => {
   if (!req.session.cart) {
     return res.render("shop/shopping-cart", {

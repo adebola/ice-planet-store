@@ -142,7 +142,42 @@
             <sub>deliver</sub>
           </span>
         </label>
-    
+      </div>
+    </div>
+    </div>
+
+    <div class="option-group-container container">
+      <div class="option-group">
+        <div class="option-container">
+      
+          <input class="option-input" checked id="option-3" type="radio" name="options-cut" value="nocut" checked data-checked="true" onchange="handleCut(this)"/>
+          <input class="option-input"  id="option-4" type="radio" name="options-cut" value="cut" onchange="handleCut(this)"/>
+          
+          <label class="option" for="option-3">
+            <span class="option__indicator"></span>
+            <span class="option__label">
+              <sub>NoCut</sub>
+            </span>
+          </label>
+      
+          <label class="option" for="option-4">
+            <span class="option__indicator"></span>
+            <span class="option__label">
+              <sub>CUT</sub>
+            </span>
+          </label>
+        </div>
+      </div>
+      </div>
+
+    <div class="my-3 mx-auto">
+      <div class="row">
+        <div class="col-12" style="text-align: center;">
+          <label class="mx-auto">Please enter additional handling instructions if none leave blank</label>
+        </div>
+        <div class="col-12" style="text-align: center;">
+          <textarea class="mx-auto" id="txtInstructions" placeholder="Please enter additional handling instructions" name="instructions" cols="50" rows="10"></textarea>
+        </div>
       </div>
     </div>
 
@@ -168,8 +203,6 @@
     
       </div>
     </div> -->
-
-    </div>
 
     <div class="alert alert-primary cart-info" id="pickup">
       <h4> Important Announcement</h4>
@@ -213,6 +246,7 @@
         </div>
       </div>
     </div>
+
   </div>
 </div>
 

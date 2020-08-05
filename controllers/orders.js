@@ -106,9 +106,14 @@ exports.saveTransaction = (req, res, next) => {
       user: req.user ? req.user : user,
       cart: req.session.cart,
       paymentId: req.body.payref,
+      cut: req.body.cut
     });
 
-    console.log(order);
+    if (req.body.message && req.body.message.trim().length > 0) {
+      order.instruction = req.body.message
+    }
+
+    //console.log(order);
 
     order
       .save()

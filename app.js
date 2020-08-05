@@ -22,6 +22,7 @@ const logger = require('./config/winston');
 const app = express();
 
 //const enableBundles = require('./seed');
+//const runReceipt = require('./test/testReceipt');
 
 mongoose.connect(
   process.env.DATABASEURL,
@@ -36,6 +37,7 @@ mongoose.connect(
   });
 
   //enableBundles();
+  //runReceipt();
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));

@@ -11,8 +11,17 @@ function Validate() {
   return true;
 }
 
+function handleCut(option) {
+  let previous = $("input[name=options-cut][data-checked=true]")[0];
+
+  option.setAttribute("data-checked", "true");
+  previous.removeAttribute("data-checked");
+
+}
+
 function handleOptions(option) {
   let previous = $("input[name=options][data-checked=true]")[0];
+  console.log($("input[name=options][data-checked=true]"));
 
   option.setAttribute("data-checked", "true");
   previous.removeAttribute("data-checked");
@@ -238,6 +247,7 @@ function processPayment() {
 }
 
 function payWithPaystack() {
+
   var xhttpReq = new XMLHttpRequest();
   var url = window.origin + "/orders/start-transaction";
   xhttpReq.open("POST", url, true);
@@ -280,8 +290,14 @@ function payWithPaystack() {
 
           xhttpReq2.responseType = "json";
 
+          let message = document.getElementById('txtInstructions').value;
+          let option = $("input[name=options-cut][data-checked=true]")[0];
+          
+
           var json2 = JSON.stringify({
             payref: response.reference,
+            cut: option.id == 'option-3' ? false : true,
+            message: message ? message : null
           });
 
           xhttpReq2.onload = () => {

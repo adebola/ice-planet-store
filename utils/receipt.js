@@ -12,6 +12,8 @@ module.exports = function Receipt(orderId) {
   this.path = uniqueFilename(os.tmpdir()) + ".pdf";
 
   this.createReceipt = async function () {
+
+    console.log('Inside Create Receipt OrderId : ' + this.orderId);
     Order.findById(orderId)
       .populate('user')
       .then((order) => {
@@ -115,7 +117,7 @@ function generateHeader(doc) {
     const keys = Object.keys(products);
 
     for (const key of keys) {
-      product = products[key];
+      let product = products[key];
 
       product.bundles.forEach((bundle) => {
         if (bundle.qty > 0) {
@@ -196,9 +198,11 @@ function generateHeader(doc) {
   function formatCurrency (number) {
     return new Intl.NumberFormat("en-NG", {
       style: "currency",
-      currency: "NGN",
+      //currency: "₦",
+      currencyDisplay: 'symbol',
+      currency: 'NGN',
       minimumFractionDigits: 2,
-    }).format(number);
+    }).format(number).replace('NGN', 'N');
   }
 
   function formatDate (date) {

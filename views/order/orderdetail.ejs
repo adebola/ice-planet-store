@@ -97,10 +97,51 @@
               cols="60"
               rows="10"
             ><%=(order.user && order.user.address) ? order.user.address : '' %></textarea>
+
+            
           </div>
+
+         
+
         </div>
         <div class="col-md-6 col-sm-12">
           <div class="row">
+            <div class="col-12">
+              <div class="form-group input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fad fa-axe"></i>
+                  </span>
+                </div>
+                <input
+                  name="Cut"
+                  class="form-control"
+                  placeholder="CUT"
+                  value="<%= order.cut ? 'Please Cut' : 'Please DO NOT CUT' %>"
+                  type="text"
+                  disabled
+                />
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"
+                    ><i class="far fa-sign"></i></span>
+                </div>
+    
+                <textarea
+                  disabled
+                  class="form-control"
+                  id="txtinstructions"
+                  name="instruction"
+                  cols="60"
+                  rows="10"
+                ><%=order.instruction ? order.instruction : 'NO SPECIFIC INSTRUCTIONS' %></textarea>
+    
+                
+              </div>
+            </div>
             <div class="col-12">
 
               <% if (order.fulfilled) { %>
@@ -115,6 +156,7 @@
                 <button id="btnverify" class="btn btn-warning" onClick="verifyPayment('<%= order._id %>', this)"><i class="fal fa-sack-dollar"></i> Payment</button>
               <% } %>
             </div>
+            
             <div class="col-12 mt-3">
               <h4><i class="fal fa-tags"></i> Total Price &#x20A6;<%= order.totalPrice %></h4>
             </div>
