@@ -88,11 +88,12 @@ app.use((req, res, next) => {
 
 app.use((req, res, next) => {
 
-  console.log(req.url);
-
+  //console.log(req.url);
   //console.log('X-FORWARDED-PROTO : ' + req.headers['x-forwarded-proto']);
 
   if (process.env.NODE_ENV === 'production') {
+
+    console.log('production');
 
     if (req.headers.host === 'aqueous-depths-63270.herokuapp.com') {
       return res.redirect(301, 'https://www.iceplanet.store' + req.url);
