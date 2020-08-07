@@ -86,6 +86,21 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+
+  console.log('X-FORWARDED-PROTO : ' + req.headers['x-forwarded-proto']);
+  
+  if (process.env.NODE_ENV === 'production') {
+    if (req.headers['x-forwarded-proto'] !== 'https') {
+      res.redirect('https://' + req.headers.host + req.url);
+    } else {
+      return next();
+    }
+  } else {
+    return next();
+  }
+});
+
 app.use("/", indexRouter);
 app.use("/users", userRouter);
 app.use("/products", productRouter);
