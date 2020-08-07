@@ -88,8 +88,8 @@ app.use((req, res, next) => {
 
 app.use((req, res, next) => {
 
-  console.log('X-FORWARDED-PROTO : ' + req.headers['x-forwarded-proto']);
-  
+  //console.log('X-FORWARDED-PROTO : ' + req.headers['x-forwarded-proto']);
+
   if (process.env.NODE_ENV === 'production') {
     if (req.headers['x-forwarded-proto'] !== 'https') {
       res.redirect('https://' + req.headers.host + req.url);
