@@ -57,7 +57,7 @@ function generateHeader(doc) {
     doc
       .fontSize(10)
       .text(
-        "Thank You shopping with us, please visit us again on www.iceplanet.store",
+        "Thank You for shopping with us, please visit us again on www.iceplanet.store",
         50,
         780,
         { align: "center", width: 500 }
@@ -65,7 +65,7 @@ function generateHeader(doc) {
   }
 
   function generateCustomerInformation (doc, order) {
-    doc.fillColor("#444444").fontSize(20).text("Invoice", 50, 160);
+    doc.fillColor("#444444").fontSize(20).text("Receipt", 50, 160);
 
     generateHr(doc, 185);
 

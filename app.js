@@ -93,7 +93,7 @@ app.use((req, res, next) => {
 
   if (process.env.NODE_ENV === 'production') {
 
-    console.log('production');
+    //console.log('production');
 
     if (req.headers.host === 'aqueous-depths-63270.herokuapp.com') {
       return res.redirect(301, 'https://www.iceplanet.store' + req.url);
