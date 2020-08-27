@@ -8,5 +8,6 @@ router.use(csrf());
 
 router.get('/', ContactController.renderContact);
 router.post('/info', ContactController.info);
+router.get('/about', ContactController.renderAbout);
 
 module.exports = router;

@@ -7,6 +7,12 @@ exports.renderContact = (req, res, next) => {
   });
 };
 
+exports.renderAbout = (req, res, next) => {
+  res.render('contact/about', {
+    csrfToken: req.csrfToken()
+  });
+}
+
 exports.info = (req, res, next) => {
 
   const comment = new Comment();
