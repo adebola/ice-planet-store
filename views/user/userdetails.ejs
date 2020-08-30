@@ -51,8 +51,25 @@
           <input
             name="telephone"
             class="form-control"
-            placeholder="Phone number"
-            value="<%=user.telephoneNumber ? user.telephoneNumber : 'None'%>"
+            placeholder="Telephone Number"
+            value="<%=user.telephoneNumber ? user.telephoneNumber : ''%>"
+            type="text"
+            disabled
+          />
+        </div>
+
+        <!-- Date -->
+        <div class="form-group input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="fal fa-clock"></i>
+            </span>
+          </div>
+          <input
+            name="Date"
+            class="form-control"
+            placeholder="Date of Creation"
+            value="<%=user.createDate ? user.createDate : ''%>"
             type="text"
             disabled
           />
@@ -69,7 +86,7 @@
             name="organization"
             class="form-control"
             placeholder="Organization"
-            value="<%=user.organization ? user.organization : 'None'%>"
+            value="<%=user.organization ? user.organization : ''%>"
             disabled
             type="text"
             disabled
@@ -92,7 +109,7 @@
             rows="10"
             placeholder="Address"
           >
-<%=user.address ? user.address : 'None' %></textarea
+<%=user.address ? user.address : '' %></textarea
           >
         </div>
       </article>
