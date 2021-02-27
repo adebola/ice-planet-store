@@ -13,11 +13,9 @@ module.exports = function Receipt(orderId) {
 
   this.createReceipt = async function () {
 
-    console.log('Inside Create Receipt OrderId : ' + this.orderId);
     Order.findById(orderId)
       .populate('user')
       .then((order) => {
-        logger.info("Saving Pdf file to : " + this.path);
 
         generateHeader(this.doc);
         generateCustomerInformation(this.doc, order);

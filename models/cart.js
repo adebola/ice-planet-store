@@ -27,8 +27,6 @@ module.exports = function Cart(oldCart) {
     var storedItem = this.items[productId];
     qty = parseInt(qty);
 
-    logger.info("Cart Object Total Quantity: " + this.totalQty);
-
     if (!storedItem) {
       
       logger.info("Cart Object StoredItem Not Found Creating It");
