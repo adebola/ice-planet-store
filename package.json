@@ -23,7 +23,7 @@
     "mongoose": "^5.9.7",
     "morgan": "~1.9.1",
     "multer": "^1.4.2",
-    "nodemailer": "^6.4.6",
+    "nodemailer": "^6.4.16",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "paystack": "^2.0.1",
